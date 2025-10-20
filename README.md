@@ -10,10 +10,18 @@
 
 ## Tasks 
 
+#### Backend
+
 - [x] Initialise project
+    - git & uv
 - [x] Load fpl data
+    - Requires motherduck account, token and database
 - [x] Load football-data data (fixtures and standings)
-- [ ] Transform data with dbt models
-- [ ] Create streamlit app
+    - Requires API key
+- [x] Transform data with dbt models
 - [ ] Create github action to run dlt and dbt
+
+#### Frontend
+
+- [ ] Create streamlit app
 - [ ] Host streamlit app on modal
