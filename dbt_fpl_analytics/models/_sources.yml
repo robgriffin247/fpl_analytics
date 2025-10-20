@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: fpl
+    description: Raw FPL data loaded via dlt and identified as useful
+    schema: fpl
+    tables:
+      - name: elements
+        description: Players
+      - name: element_stats
+        description: Stat labels
+      - name: element_types
+        description: Positions
+      - name: events
+        description: Gameweeks
+      - name: teams
+        description: Teams
+        
+  - name: football_data
+    description: Raw football data loaded via dlt
+    schema: football_data
+    tables:
+      - name: fixtures
+        description: Fixtures
+      - name: standings
+        description: Standings

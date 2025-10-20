@@ -1,0 +1,11 @@
+dbt_fpl_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: md:fpl_analytics
+      schema: dbt
+      threads: 4
+      extensions:
+        - motherduck
+      motherduck_token: "{{ env_var('MOTHERDUCK_TOKEN') }}"

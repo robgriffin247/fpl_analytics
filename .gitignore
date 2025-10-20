@@ -1,3 +1,8 @@
 .env
 .venv
 uv.lock
+
+
+target/
+logs/
+.user.yml

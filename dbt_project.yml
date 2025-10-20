@@ -1,0 +1,23 @@
+name: 'dbt_fpl_analytics'
+version: '1.0.0'
+
+profile: 'dbt_fpl_analytics'
+
+model-paths: ["dbt_fpl_analytics/models"]
+macro-paths: ["dbt_fpl_analytics/macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  dbt_fpl_analytics:
+    staging:
+      +schema: staging
+      +materialized: table
+    intermediate:
+      +schema: intermediate
+      +materialized: table
+    core:
+      +schema: core
+      +materialized: table

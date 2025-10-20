@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: obt_players
+    description: >
+      "Table containing player statistics for each gameweek during the season. One row
+      per player and gameweek. Production table includes details on upcoming fixtures including 
+      opponents and attacking/defending prospect biases."
+    
+    # Add data_tests for unique combination of gameweek and player
+    # data_tests:
+    #   - dbt_utils.unique_combination_of_columns:
+    #       arguments:
+    #         combination_of_columns:
+    #           - player_id
+    #           - gameweek
+    
+  - name: fct_standings
+    description: League table.
