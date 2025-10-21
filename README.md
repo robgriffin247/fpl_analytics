@@ -1,12 +1,13 @@
 # FPL Analytics
 
+- git for version control
 - uv for dependencies management
 - motherduck to persist data
-- dlt to load data
+- dlt to extract/load data
 - dbt to transform data
+- modal to orchestrate dlt and dbt runs
 - visualise in streamlit
 - modal to host the webapp
-- github action to schedule ELT runs
 
 ## Tasks 
 
@@ -19,9 +20,9 @@
 - [x] Load football-data data (fixtures and standings)
     - Requires API key
 - [x] Transform data with dbt models
-- [ ] Create github action to run dlt and dbt
+- [ ] Orchestrate with Modal (consider Dagster cloud later)
 
 #### Frontend
 
 - [ ] Create streamlit app
-- [ ] Host streamlit app on modal
+- [ ] Host streamlit app on Modal
