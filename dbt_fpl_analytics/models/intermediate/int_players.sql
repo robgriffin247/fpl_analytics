@@ -65,7 +65,7 @@ new_variables as (
     select
         * exclude(points_per_appearance),
         first_name || ' ' || second_name as full_name,
-        case when isnan(minutes_played / (gameweek-1)) then 0 else minutes_played / (gameweek-1) end as minutes_played_per_gameweek,
+        case when isnan(minutes_played / (gameweek-1)) then 0 else (minutes_played / (gameweek-1))::int end as minutes_played_per_gameweek,
         case availability_code
             when 'a' then 'Available'
             when 'i' then 'Injured'
