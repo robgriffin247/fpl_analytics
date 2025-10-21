@@ -8,3 +8,5 @@ logs/
 .user.yml
 
 dbt_packages/
+
+__pycache__/
