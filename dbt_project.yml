@@ -1,17 +1,17 @@
-name: 'dbt_fpl_analytics'
+name: 'transform'
 version: '1.0.0'
 
-profile: 'dbt_fpl_analytics'
+profile: 'transform'
 
-model-paths: ["dbt_fpl_analytics/models"]
-macro-paths: ["dbt_fpl_analytics/macros"]
+model-paths: ["transform/models"]
+macro-paths: ["transform/macros"]
 
 clean-targets:
   - "target"
   - "dbt_packages"
 
 models:
-  dbt_fpl_analytics:
+  transform:
     staging:
       +schema: staging
       +materialized: table

@@ -1,4 +1,4 @@
-dbt_fpl_analytics:
+transform:
   target: dev
   outputs:
     dev:
