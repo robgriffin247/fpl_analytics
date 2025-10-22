@@ -2,20 +2,29 @@ import modal
 import datetime
 from pathlib import Path
 
+"""
+Test locally with 
+uv run modal serve modal/pipeline_runner.py
+Deploy with (after any changes in extract_load/ or transform/)
+uv run modal deploy modal/pipeline_runner.py
+"""
+
 PROJECT_ROOT = Path(__file__).parent.parent
 
-app = modal.App("test-app")
+app = modal.App("fpl-analytics")
 
 image = (
     modal.Image.debian_slim()
     .pip_install("dlt[motherduck]", "dbt-duckdb", "httpx")
     .add_local_dir(PROJECT_ROOT / "extract_load", "/root/extract_load")
     .add_local_dir(PROJECT_ROOT / "transform", "/root/transform")
-    #.add_local_dir(PROJECT_ROOT / "profiles", "/root/profiles")
+    .add_local_file(PROJECT_ROOT / "dbt_project.yml", "/root/dbt_project.yml")  # ADD THIS
+    .add_local_file(PROJECT_ROOT / "profiles.yml", "/root/profiles.yml")  # ADD THIS if you have it
 )
 
+
 @app.function(
-    schedule=modal.Cron('0 0 1 1 *'),
+    schedule=modal.Cron('30 4 * * *'),
     secrets=[modal.Secret.from_name("motherduck-secret"), 
              modal.Secret.from_name("football-data-api-key")],
     retries=2,

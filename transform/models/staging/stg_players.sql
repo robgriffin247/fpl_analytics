@@ -10,6 +10,10 @@ gameweeks as (
     from {{ ref("stg_gameweeks") }}
 ),
 
+loads as (
+  select load_id as _dlt_load_id, inserted_at as load_timestamp from {{ source("fpl", "_dlt_loads")}}
+),
+
 latest_load_per_gameweek as (
   select 
     gameweek, 
@@ -34,9 +38,17 @@ remove_non_selectables as (
     where can_select and not removed and status!='u'
 ),
 
+add_load_timestamp as (
+  select
+    remove_non_selectables.*,
+    loads.load_timestamp
+  from remove_non_selectables left join loads using(_dlt_load_id)
+),
+
 select_columns as (
     select
         _dlt_load_id::double as _dlt_load_id,
+        load_timestamp,
         id::int as player_id,
         web_name::varchar as display_name,
         first_name::varchar as first_name,
@@ -63,7 +75,7 @@ select_columns as (
         goals_conceded::int as goals_conceded,
         expected_goals_conceded::float as expected_goals_conceded,
        
-    from remove_non_selectables
+    from add_load_timestamp
 )
 
 select * from select_columns

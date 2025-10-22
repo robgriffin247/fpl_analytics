@@ -106,7 +106,12 @@ def load_from_football_data():
 
     pipeline = dlt.pipeline(
         pipeline_name="fpl_analytics__football_data_pipeline",
-        destination="motherduck",
+        destination=dlt.destinations.motherduck(
+            credentials={
+                "database": "fpl_analytics",
+                "motherduck_token": os.environ['MOTHERDUCK_TOKEN']
+            }
+        ),
         dataset_name="football_data",
     )
     
@@ -115,12 +120,11 @@ def load_from_football_data():
     return load_info
 
 
-def load_fpl():
 
-    @dlt.resource(
-        name="fpl_data",
-        write_disposition="append"
-    )
+def load_fpl():
+    import os
+    
+    @dlt.resource(name="fpl_data", write_disposition="append")
     def get_data():
         url = "https://fantasy.premierleague.com/api/bootstrap-static/"
         response = httpx.get(url)
@@ -128,7 +132,6 @@ def load_fpl():
         
         data = response.json()
         
-        # Endpoint returns nested data structures, each becomes a table
         for key, value in data.items():
             if isinstance(value, list):
                 for item in value:
@@ -136,19 +139,23 @@ def load_fpl():
             else:
                 yield dlt.mark.with_table_name({key: value}, "metadata")
 
-
     @dlt.source
     def fpl_source():
         return get_data()
 
+    # Configure destination with credentials dict
     pipeline = dlt.pipeline(
         pipeline_name="fpl_analytics__fpl_pipeline",
-        destination="motherduck",
+        destination=dlt.destinations.motherduck(
+            credentials={
+                "database": "fpl_analytics",
+                "motherduck_token": os.environ['MOTHERDUCK_TOKEN']
+            }
+        ),
         dataset_name="fpl",
     )
 
     load_info = pipeline.run(fpl_source())
-        
     return load_info
 
 if __name__=="__main__":

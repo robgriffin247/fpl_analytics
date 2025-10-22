@@ -7,14 +7,14 @@ def run_dbt_transformations(profiles_dir="."):
     
     # Get absolute paths for debugging
     cwd = Path("./transform").resolve()
-    profiles_path = Path(profiles_dir).resolve()
-    
+    dbt_project_dir = Path("/root")  # Not /root/transform
+    profiles_dir = Path("/root")  # Or wherever your profiles.yml is
+       
     print(f"Running dbt from: {cwd}")
-    print(f"Profiles dir: {profiles_path}")
-    
+
     result = subprocess.run(
-        ["dbt", "run", "--profiles-dir", str(profiles_path)],
-        cwd=str(cwd),
+        ["dbt", "run", "--profiles-dir", str(profiles_dir)],
+        cwd=str(dbt_project_dir),
         capture_output=True,
         text=True,
         env=os.environ.copy()
