@@ -1,10 +1,12 @@
 # FPL Analytics
 
-## Aim
+## Overview
 
-Create a front-end web app that displays data relating to fantasy football, where users can filter, visualise and explore data on players and fixtures. Create a back-end that extracts and loads data from multiple sources, transforms the data into production ready data, and automatically collects the latest data every day. Data models have been designed to persist data for each gameweek.
+The aim of this project is to create an app allowing the visualisation and exploration of data from Fantasy Premier League. That data includes player stats, team stats, fixtures and standings.
 
-## Tech Stack
+The project requires a back-end that automatically and routinely extracts, loads and transforms data from multiple APIs into a cloud-database. It also requires a front-end web app UI allowing interaction with the data and visualisations.
+
+#### Tech Stack
 
 - git for version control
 - uv for package management
@@ -17,6 +19,15 @@ Create a front-end web app that displays data relating to fantasy football, wher
 - github workflows
     - redeploy the pipeline to modal on changes to ``./modal``, ``./extract_load``, ``./transform`` and ``pyproject.toml``
 
+#### Design
+
+The FPL API includes statistics on players ("elements") and teams. The Football-Data API includes data on league standings and fixtures. This data is extracted from the APIs and loaded to a database on Motherduck using dlt. 
+
+Data is then transformed using dbt to create datasets ready for use in the UI. Data models have been designed to persist data for each gameweek, retaining the latest load per gameweek for each player, to allow tracking of player performance over the season (obt_players contains one row per player and gameweek; the raw fpl_analytics.fpl.elements contains one row per player and dlt load). 
+
+A Modal app with a cron schedule is used to run the two dlt pipelines and the dbt transformations every day. Data can be explored via the [motherduck web UI](https://app.motherduck.com/). When changes are committed to main, a Github workflow triggers a redeployment of the pipeline runner app if there have been any changes to files relating to the Modal pipeline runner app, dlt pipelines, dbt transformations or project dependencies.
+
+Data is visualised in a Streamlit app (under construction). This will be hosted via Modal and have a similar deployment workflow.
 
 ## Run this project
 
@@ -36,9 +47,10 @@ Create a front-end web app that displays data relating to fantasy football, wher
     1. Add values to the ``.env``
     1. Run ``direnv allow``
 
-1. Install dependencies
+1. Install python and dependencies
 
     ```
+    uv python install
     uv sync
     ```
 
@@ -59,5 +71,6 @@ Create a front-end web app that displays data relating to fantasy football, wher
 ## Tasks/Ideas
 
 - [ ] Host UI on modal
-- [x] Github action/webhook (whatever the right tool is called) to deploy the modal app(s) on changes to main (if the relevant files change)
-- [ ] Run black linter before commit to main
+- [ ] Linting
+- [ ] Workflow to deploy webapp
+- [ ] Slack/discord/email notice if pipeline fails
