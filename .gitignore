@@ -8,3 +8,6 @@ logs/
 .user.yml
 
 dbt_packages/
+
+__pycache__/
+fpl_analytics.egg-info/
