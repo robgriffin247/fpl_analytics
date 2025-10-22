@@ -1,29 +1,60 @@
 # FPL Analytics
 
+## Aim
+
+Create a front-end web app that displays data relating to fantasy football, where users can filter, visualise and explore data on players and fixtures. Create a back-end that extracts and loads data from multiple sources, transforms the data into production ready data, and automatically collects the latest data every day. Data models have been designed to persist data for each gameweek.
+
+## Tech Stack
+
 - git for version control
-- uv for dependencies management
+- uv for package management
 - motherduck to persist data
 - dlt to extract/load data
 - dbt to transform data
 - modal to orchestrate dlt and dbt runs
-- visualise in streamlit
+- streamlit for the UI
 - modal to host the webapp
 
-## Tasks 
 
-#### Backend
+## Run this project
 
-- [x] Initialise project
-    - git & uv
-- [x] Load fpl data
-    - Requires motherduck account, token and database
-- [x] Load football-data data (fixtures and standings)
-    - Requires API key
-- [x] Transform data with dbt models
-- [ ] Orchestrate with Modal (consider Dagster cloud later)
+- Prerequisites:
+    - Motherduck account and [token](https://app.motherduck.com/settings/tokens)
+    - Account and API key for [football-data.org](https://www.football-data.org/documentation/quickstart/)
 
-#### Frontend
+1.  Clone
 
-- [ ] Create streamlit app
-- [ ] Host streamlit app on Modal
+    ```
+    git clone git@github.com:robgriffin247/fpl_analytics
+    cd fpl_analytics
+    ```
+    
+1. Set up secrets/tokens
+    1. Run ``cp .env_template .env``
+    1. Add values to the ``.env``
+    1. Run ``direnv allow``
 
+1. Install dependencies
+
+    ```
+    uv sync
+    ```
+
+1. Run/deploy the pipeline
+
+    ```
+    # modal run or serve to test; run ignores cron schedule
+    uv run modal deploy modal/pipeline_runner.py
+    ```
+
+1. Run the streamlit app locally
+
+    ```
+    uv run streamlit run ui/app.py
+    ```
+
+## Tasks/Ideas
+
+- [ ] Host UI on modal
+- [ ] Github action/webhook (whatever the right tool is called) to deploy the modal app(s) on changes to main (if the relevant files change)
+- [ ] Run black linter before commit to main

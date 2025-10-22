@@ -2,13 +2,6 @@ import modal
 import datetime
 from pathlib import Path
 
-"""
-Test locally with 
-uv run modal serve modal/pipeline_runner.py
-Deploy with (after any changes in extract_load/ or transform/)
-uv run modal deploy modal/pipeline_runner.py
-"""
-
 PROJECT_ROOT = Path(__file__).parent.parent
 
 app = modal.App("fpl-analytics")
