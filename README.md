@@ -14,6 +14,8 @@ Create a front-end web app that displays data relating to fantasy football, wher
 - modal to orchestrate dlt and dbt runs
 - streamlit for the UI
 - modal to host the webapp
+- github workflows
+    - redeploy the pipeline to modal on changes to ``./modal``, ``./extract_load``, ``./transform`` and ``pyproject.toml``
 
 
 ## Run this project
@@ -40,11 +42,12 @@ Create a front-end web app that displays data relating to fantasy football, wher
     uv sync
     ```
 
-1. Run/deploy the pipeline
+1. Run/deploy the pipeline (note the pipeline_runner.py script auto-redeploys as needed via github workflows)
 
     ```
     # modal run or serve to test; run ignores cron schedule
-    uv run modal deploy modal/pipeline_runner.py
+    # modal deply to update the deployed app
+    uv run modal run modal/pipeline_runner.py
     ```
 
 1. Run the streamlit app locally
@@ -56,5 +59,5 @@ Create a front-end web app that displays data relating to fantasy football, wher
 ## Tasks/Ideas
 
 - [ ] Host UI on modal
-- [ ] Github action/webhook (whatever the right tool is called) to deploy the modal app(s) on changes to main (if the relevant files change)
+- [x] Github action/webhook (whatever the right tool is called) to deploy the modal app(s) on changes to main (if the relevant files change)
 - [ ] Run black linter before commit to main
