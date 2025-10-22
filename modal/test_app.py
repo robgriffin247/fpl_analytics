@@ -1,46 +1,49 @@
 import modal
 import datetime
-import os 
-from extract_load.loaders import load_fpl, load_from_football_data
-from transform.transformer import run_dbt_transformations
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).parent.parent
+
 app = modal.App("test-app")
+
 image = (
     modal.Image.debian_slim()
-    .pip_install(
-        "dlt[motherduck]",
-        "dbt-duckdb",
-        "requests"
-    )
-    # Use pip_install_from_pyproject if you have pyproject.toml
-    .pip_install_from_pyproject("pyproject.toml")
+    .pip_install("dlt[motherduck]", "dbt-duckdb", "httpx")
+    .add_local_dir(PROJECT_ROOT / "extract_load", "/root/extract_load")
+    .add_local_dir(PROJECT_ROOT / "transform", "/root/transform")
+    #.add_local_dir(PROJECT_ROOT / "profiles", "/root/profiles")
 )
 
 @app.function(
-        schedule=modal.Cron('*/12 * * * *'),
-        secrets=[modal.Secret.from_name("motherduck-secret")],
-        retries=2,
-        timeout=300,
-        image=image,
-    )
+    schedule=modal.Cron('0 0 1 1 *'),
+    secrets=[modal.Secret.from_name("motherduck-secret"), 
+             modal.Secret.from_name("football-data-api-key")],
+    retries=2,
+    timeout=300,
+    image=image,
+)
 def run_pipeline():
+    import sys
+    sys.path.insert(0, "/root")
+    
+    from extract_load.loaders import load_fpl, load_from_football_data
+    from transform.transformer import run_dbt_transformations
+    
     print(f"Running pipeline ({datetime.datetime.now()})... ")
 
     results = {}
     
     try:
-        # Step 1: Extract FPL data
         print("📥 Loading FPL player data...")
         fpl_result = load_fpl()
         results['fpl'] = fpl_result
         print(f"✅ {fpl_result}")
         
-        # Step 2: Extract fixtures
         print("📥 Loading fixtures...")
         fixtures_result = load_from_football_data()
         results['fixtures'] = fixtures_result
         print(f"✅ {fixtures_result}")
         
-        # Step 3: Run dbt transformations
         print("🔄 Running dbt transformations...")
         dbt_result = run_dbt_transformations()
         results['dbt'] = dbt_result

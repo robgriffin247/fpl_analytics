@@ -15,3 +15,13 @@ dependencies = [
     "polars>=1.34.0",
     "streamlit>=1.50.0",
 ]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+# Tell setuptools which packages to include
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["extract_load*", "transform*", "modal*"]
+exclude = ["ui*", "logs*", "data*", "target*", "dbt_packages*", "dbt_project*"]
