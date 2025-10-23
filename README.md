@@ -6,7 +6,8 @@ The aim of this project is to create an app allowing the visualisation and explo
 
 The project requires a back-end that automatically and routinely extracts, loads and transforms data from multiple APIs into a cloud-database. It also requires a front-end web app UI allowing interaction with the data and visualisations.
 
-#### Tech Stack
+#### Data Stack
+
 
 - git for version control
 - uv for package management
@@ -14,10 +15,11 @@ The project requires a back-end that automatically and routinely extracts, loads
 - dlt to extract/load data
 - dbt to transform data
 - modal to orchestrate dlt and dbt runs
-- streamlit for the UI
-- modal to host the webapp
-- github workflows
-    - redeploy the pipeline to modal on changes to ``./modal``, ``./extract_load``, ``./transform`` and ``pyproject.toml``
+- streamlit for the web app/UI
+- modal to host the web app
+- github workflows for continuous deployment
+
+![alt text](datastack.png)
 
 #### Design
 
