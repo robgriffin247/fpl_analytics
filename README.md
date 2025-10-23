@@ -58,7 +58,8 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
 
     ```
     # modal run or serve to test; run ignores cron schedule
-    # modal deply to update the deployed app
+    # modal deploy to update the deployed app
+    # run specific functions with e.g. ...pipeline_runner.py::dbt_only
     uv run modal run modal/pipeline_runner.py
     ```
 
