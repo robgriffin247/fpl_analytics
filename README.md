@@ -71,6 +71,7 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
 
 ## Tasks/Ideas
 
+- [ ] Develop UI
 - [ ] Host UI on modal
 - [ ] Linting
 - [ ] Workflow to deploy webapp
