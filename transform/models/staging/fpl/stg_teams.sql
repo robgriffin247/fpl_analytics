@@ -1,19 +1,20 @@
 with 
+
 teams as (
-    select
-        id::int as team_id,
-        short_name::varchar as team_abbreviation,
-        strength_attack_home::int as team_strength_home_attack,
-        strength_defence_home::int as team_strength_home_defence,
-        strength_attack_away::int as team_strength_away_attack,
-        strength_defence_away::int as team_strength_away_defence,
-        _dlt_load_id
-    from {{ source("fpl", "teams") }}
+  select
+    id::int as team_id,
+    short_name::varchar as team_abbreviation,
+    strength_attack_home::int as team_strength_home_attack,
+    strength_defence_home::int as team_strength_home_defence,
+    strength_attack_away::int as team_strength_away_attack,
+    strength_defence_away::int as team_strength_away_defence,
+    _dlt_load_id
+  from {{ source("fpl", "teams") }}
 ),
 
 gameweeks as (
-    select *
-    from {{ ref("stg_gameweeks") }}
+  select *
+  from {{ ref("stg_gameweeks") }}
 ),
 
 latest_load_per_gameweek as (

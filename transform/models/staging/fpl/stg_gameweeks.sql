@@ -1,10 +1,11 @@
 with 
+
 source as (
-    select
-        id::int as gameweek,
-        is_next::boolean as is_coming_gameweek,
-        _dlt_load_id::double as _dlt_load_id
-    from {{ source("fpl", "events") }}
+  select
+    id::int as gameweek,
+    is_next::boolean as is_coming_gameweek,
+    _dlt_load_id::double as _dlt_load_id
+  from {{ source("fpl", "events") }}
 ),
 
 latest_load_per_gameweek as (

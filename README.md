@@ -73,6 +73,7 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
 
 ## Tasks/Ideas
 
+- [ ] Add some rolling stats; points last five / 5, minutes last five / 5
 - [ ] Develop UI
 - [ ] Host UI on modal
 - [ ] Linting

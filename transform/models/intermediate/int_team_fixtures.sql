@@ -6,35 +6,35 @@ fixtures as (
 ),
 
 teams as (
-    select * 
-    from {{ ref("stg_teams") }} 
-    where gameweek=(select max(gameweek) from {{ref("stg_teams") }} )
+  select * 
+  from {{ ref("stg_teams") }} 
+  where gameweek=(select max(gameweek) from {{ref("stg_teams") }} )
 ),
 
 fix_nfo as (
-    select * exclude(home_team_abbreviation, away_team_abbreviation),
-        case when home_team_abbreviation='NOT' then 'NFO' else home_team_abbreviation end as home_team_abbreviation,
-        case when away_team_abbreviation='NOT' then 'NFO' else away_team_abbreviation end as away_team_abbreviation,
-    from fixtures
+  select * exclude(home_team_abbreviation, away_team_abbreviation),
+    case when home_team_abbreviation='NOT' then 'NFO' else home_team_abbreviation end as home_team_abbreviation,
+    case when away_team_abbreviation='NOT' then 'NFO' else away_team_abbreviation end as away_team_abbreviation,
+  from fixtures
 ),
 
 home_fixtures as (
-    select
-        gameweek,
-        home_team_abbreviation as team_abbreviation,
-        away_team_abbreviation as fixtures_next,
-        true as home,
-    from fix_nfo
+  select
+    gameweek,
+    home_team_abbreviation as team_abbreviation,
+    away_team_abbreviation as fixtures_next,
+    true as home,
+  from fix_nfo
 )
 ,
 
 away_fixtures as (
-    select
-        gameweek,
-        away_team_abbreviation as team_abbreviation,
-        home_team_abbreviation as fixtures_next,
-        false as home,
-    from fix_nfo
+  select
+    gameweek,
+    away_team_abbreviation as team_abbreviation,
+    home_team_abbreviation as fixtures_next,
+    false as home,
+  from fix_nfo
 ),
 
 all_team_fixtures as (
@@ -45,14 +45,14 @@ all_team_fixtures as (
 
 merge_in_team_strengths as (
   select 
-      all_team_fixtures.*,
-      case when home then teams.team_strength_home_attack else teams.team_strength_away_attack end as team_attack_strength,
-      case when home then teams.team_strength_home_defence else teams.team_strength_away_defence end as team_defence_strength,
-      case when home then opponents.team_strength_away_attack else opponents.team_strength_home_attack end as opponent_attack_strength,    
-      case when home then opponents.team_strength_away_defence else opponents.team_strength_home_defence end as opponent_defence_strength    
+    all_team_fixtures.*,
+    case when home then teams.team_strength_home_attack else teams.team_strength_away_attack end as team_attack_strength,
+    case when home then teams.team_strength_home_defence else teams.team_strength_away_defence end as team_defence_strength,
+    case when home then opponents.team_strength_away_attack else opponents.team_strength_home_attack end as opponent_attack_strength,    
+    case when home then opponents.team_strength_away_defence else opponents.team_strength_home_defence end as opponent_defence_strength    
   from all_team_fixtures 
-      left join teams using(team_abbreviation)
-      left join teams as opponents on all_team_fixtures.fixtures_next=opponents.team_abbreviation
+    left join teams using(team_abbreviation)
+    left join teams as opponents on all_team_fixtures.fixtures_next=opponents.team_abbreviation
 ),
 
 rescale_strength as (
@@ -105,13 +105,13 @@ add_rolling_average_prospects as (
   select
     *,
     avg(attacking_prospects) over (
-            partition by team_abbreviation
-            order by gameweek 
-            rows between current row and 2 following) as attacking_prospects_next_3,
+      partition by team_abbreviation
+      order by gameweek 
+      rows between current row and 2 following) as attacking_prospects_next_3,
     avg(defending_prospects) over (
-            partition by team_abbreviation
-            order by gameweek 
-            rows between current row and 2 following) as defending_prospects_next_3
+      partition by team_abbreviation
+      order by gameweek 
+      rows between current row and 2 following) as defending_prospects_next_3
   from add_prospect_icons
 ),
 
@@ -119,9 +119,9 @@ add_fixtures_next_3 as (
   select
     *,
     string_agg(fixtures_next, '-') over (
-        partition by team_abbreviation 
-        order by gameweek 
-        rows between current row and 2 following) as fixtures_next_3
+      partition by team_abbreviation 
+      order by gameweek 
+      rows between current row and 2 following) as fixtures_next_3
   from add_rolling_average_prospects
 ),
 
@@ -129,13 +129,13 @@ add_icons_next_3 as (
   select
     *,
     string_agg(attacking_prospects_icon, '') over (
-        partition by team_abbreviation 
-        order by gameweek 
-        rows between current row and 2 following) as attacking_prospects_icon_next_3,
+      partition by team_abbreviation 
+      order by gameweek 
+      rows between current row and 2 following) as attacking_prospects_icon_next_3,
     string_agg(defending_prospects_icon, '') over (
-        partition by team_abbreviation 
-        order by gameweek 
-        rows between current row and 2 following) as defending_prospects_icon_next_3
+      partition by team_abbreviation 
+      order by gameweek 
+      rows between current row and 2 following) as defending_prospects_icon_next_3
   from add_fixtures_next_3
 )
 
