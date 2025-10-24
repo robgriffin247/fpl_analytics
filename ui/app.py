@@ -11,13 +11,7 @@ t1, t2, t3 = st.tabs(["Stats", "Compare", "Fixtures & Standings"])
 
 with t1:
     # Filters
-    c1, c2, c3, c4 = st.columns([5,3,3,3], gap="large")
-    filter_position = c1.container()
-    filter_cost = c2.container()
-    filter_form = c2.container()
-    filter_minutes_per_week = c3.container()
-    filter_points_per_week = c3.container()
-    filter_xg_per_90 = c4.container()
+    filter_c1, filter_c2, filter_c3, filter_c4 = st.columns([5,3,3,3], gap="large")
     # Table
     stats_table = st.container()
     # Column selector
@@ -35,20 +29,28 @@ obt_players_df = load_obt_players_df()
 gameweek_players_df = load_gameweek_players_df(obt_players_df)
 
 
+availabilities = [gameweek_players_df["availability_percent"].min(), gameweek_players_df["availability_percent"].max()]
 costs = [gameweek_players_df["current_cost"].min(), gameweek_players_df["current_cost"].max()]
 forms = [gameweek_players_df["current_form"].min(), gameweek_players_df["current_form"].max()]
 minutes_per_week = [gameweek_players_df["minutes_played_per_gameweek"].min(), gameweek_players_df["minutes_played_per_gameweek"].max()]
 players = gameweek_players_df[["name_team", "player_id"]].unique().sort(pl.col("player_id"))["name_team"].to_list()
 positions = gameweek_players_df[["position", "position_id"]].unique().sort(pl.col("position_id"))["position"].to_list()
+teams = gameweek_players_df["team"].unique().sort().to_list()
 xg_per_90 = [gameweek_players_df["expected_goals_scored_per_90"].min(), gameweek_players_df["expected_goals_scored_per_90"].max()]
 
 
 # T1
-selected_cost = filter_cost.slider("Cost (£M)", value=costs, min_value=costs[0], max_value=costs[1], step=0.1)
-selected_form = filter_cost.slider("Form", value=forms, min_value=forms[0], max_value=forms[1], step=0.1)
-selected_positions = filter_position.multiselect("Positon(s)", options=positions)
-selected_minutes_per_week = filter_minutes_per_week.slider("Mins/GW", value=minutes_per_week, min_value=minutes_per_week[0], max_value=minutes_per_week[1], step=1)
-selected_xg_per_90 = filter_xg_per_90.slider("xG/90", value=xg_per_90, min_value=xg_per_90[0], max_value=xg_per_90[1], step=0.01)
+selected_positions = filter_c1.multiselect("Positon(s)", options=positions)
+selected_players_t1 = filter_c1.multiselect("Player(s)", options=players, key="players_t1")
+selected_teams = filter_c1.multiselect("Team(s)", options=teams)
+
+selected_cost = filter_c2.slider("Cost (£M)", value=costs, min_value=costs[0], max_value=costs[1], step=0.1)
+selected_form = filter_c2.slider("Form", value=forms, min_value=forms[0], max_value=forms[1], step=0.1)
+selected_availability = filter_c2.slider("Availability", value=availabilities, min_value=availabilities[0], max_value=availabilities[1], step=25)
+
+selected_minutes_per_week = filter_c3.slider("Mins/GW", value=minutes_per_week, min_value=minutes_per_week[0], max_value=minutes_per_week[1], step=1)
+
+selected_xg_per_90 = filter_c4.slider("xG/90", value=xg_per_90, min_value=xg_per_90[0], max_value=xg_per_90[1], step=0.01)
 
 with duckdb.connect() as con:
     filtered_gameweek_players_df = con.sql(
@@ -72,11 +74,14 @@ with duckdb.connect() as con:
                 defending_prospects_next_3,
                 attacking_prospects_next_3,
             from gameweek_players_df 
-            where 
-                current_cost between {selected_cost[0]} and {selected_cost[1]}
-                and current_form between {selected_form[0]} and {selected_form[1]}
-                and minutes_played_per_gameweek between {selected_minutes_per_week[0]} and {selected_minutes_per_week[1]}
+            where true 
                 and position in {selected_positions if len(selected_positions)>0 else positions}
+                and name_team in {selected_players_t1 if len(selected_players_t1)>0 else players}
+                and team in {selected_teams if len(selected_teams)>0 else teams}
+                and current_cost between {selected_cost[0]} and {selected_cost[1]}
+                and current_form between {selected_form[0]} and {selected_form[1]}
+                and availability_percent between {selected_availability[0]} and {selected_availability[1]}
+                and minutes_played_per_gameweek between {selected_minutes_per_week[0]} and {selected_minutes_per_week[1]}
                 and expected_goals_scored_per_90 between {selected_xg_per_90[0]} and {selected_xg_per_90[1]}
         """).pl()
 
