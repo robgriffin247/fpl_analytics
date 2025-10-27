@@ -1,75 +1,40 @@
 with 
 
-players as (
+source as (
   select *
   from {{ source("fpl", "elements") }}
-),
-
-gameweeks as (
-  select *
-  from {{ ref("stg_gameweeks") }}
-),
-
-loads as (
-  select 
-    load_id as _dlt_load_id, 
-    inserted_at as load_timestamp 
-  from {{ source("fpl", "_dlt_loads")}}
-),
-
-add_gameweek_to_players as (
-  select 
-    players.*,
-    gameweeks.gameweek as gameweek 
-  from players
-    left join gameweeks using(_dlt_load_id)
-  where gameweeks.gameweek is not null
-
+  where _dlt_load_id::double in (select _dlt_load_id from {{ ref("stg_gameweeks") }})
 ),
 
 remove_non_selectables as (
   select * 
-  from add_gameweek_to_players 
+  from source 
   where can_select and not removed and status!='u'
-),
-
-add_load_timestamp as (
-  select
-    remove_non_selectables.*,
-    loads.load_timestamp
-  from remove_non_selectables 
-    left join loads using(_dlt_load_id)
 ),
 
 select_columns as (
   select
     _dlt_load_id::double as _dlt_load_id,
-    load_timestamp,
     id::int as player_id,
-    web_name::varchar as display_name,
-    first_name::varchar as first_name,
-    second_name::varchar as second_name,
+    web_name::varchar as player,
     element_type::int as position_id,
     team::int as team_id,
-    gameweek::int as gameweek,
-    now_cost::int as current_cost,
-    total_points::int as total_points,
-    form::float as current_form,
-    status::varchar as availability_code,
-    chance_of_playing_next_round::int as availability_percent,
-    in_dreamteam::boolean as current_dreamteam,
-    dreamteam_count::int as dreamteam_appearances,
-    selected_by_percent::float as selection_percent,
-    points_per_game::float as points_per_appearance,
-    starts::int as starts,
-    minutes::int as minutes_played,
-    goals_scored::int as goals_scored,
-    expected_goals::float as expected_goals_scored,
-    assists::int as goals_assisted,
-    expected_assists::float as expected_goals_assisted,
-    goals_conceded::int as goals_conceded,
-    expected_goals_conceded::float as expected_goals_conceded,
-  from add_load_timestamp
+    coalesce(now_cost::int, 0) as cost,
+    coalesce(form::float, 0) as form,
+    chance_of_playing_next_round::int as availability,
+    in_dreamteam::boolean as dreamteam,
+    coalesce(dreamteam_count::int, 0) as dreamteam_appearances,
+    coalesce(points_per_game::float, 0) as points_appearance,
+    coalesce(total_points::int, 0) as points_total,
+    coalesce(starts::int, 0) as starts_total,
+    coalesce(minutes::int, 0) as minutes_total,
+    coalesce(goals_scored::int, 0) as goals_total,
+    coalesce(expected_goals::float, 0) as xgoals_total,
+    coalesce(assists::int, 0) as assists_total,
+    coalesce(expected_assists::float, 0) as xassists_total,
+    coalesce(goals_conceded::int, 0) as concedes_total,
+    coalesce(expected_goals_conceded::float, 0) as xconcedes_total,
+  from remove_non_selectables
 )
 
 select * from select_columns

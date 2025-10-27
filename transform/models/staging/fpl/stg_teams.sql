@@ -12,6 +12,7 @@ teams as (
   from {{ source("fpl", "teams") }}
 ),
 
+/* TODO NEEDS REFACTORING */
 gameweeks as (
   select *
   from {{ ref("stg_gameweeks") }}
@@ -22,7 +23,7 @@ latest_load_per_gameweek as (
     gameweek, 
     max(_dlt_load_id) as _dlt_load_id 
   from gameweeks 
-  where is_coming_gameweek group by 1
+  where is_current group by 1
 ),
 
 gameweek_to_teams as (

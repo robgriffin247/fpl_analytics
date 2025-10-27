@@ -4,6 +4,7 @@ transform:
     dev:
       type: duckdb
       path: md:fpl_analytics
+      #path: data/fpl_analytics.duckdb
       schema: dbt
       threads: 4
       extensions:

@@ -12,6 +12,7 @@ cache_hours = 12
 )
 def load_obt_players_df():
     with duckdb.connect(f"md:{st.secrets['connections']['fpl_analytics']['database']}") as con:
+    #with duckdb.connect(f"data/fpl_analytics.duckdb") as con:
         return con.sql("select * from fpl_analytics.core.obt_players").pl().with_columns(pl.col("prospects_icon_next_3").map_elements(lambda x: emoji.emojize(x, language="alias")))
   
 

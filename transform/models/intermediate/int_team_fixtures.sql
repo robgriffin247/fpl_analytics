@@ -137,6 +137,15 @@ add_icons_next_3 as (
       order by gameweek 
       rows between current row and 2 following) as defending_prospects_icon_next_3
   from add_fixtures_next_3
+),
+
+add_previous as (
+  select 
+    *,
+    lag(fixtures_next) over (partition by team_abbreviation order by gameweek) as previous_opponent,
+    lag(defending_prospects) over (partition by team_abbreviation order by gameweek) as previous_defending_prospects,
+    lag(attacking_prospects) over (partition by team_abbreviation order by gameweek) as previous_attacking_prospects,
+  from add_icons_next_3
 )
 
-select * from add_icons_next_3
+select * from add_previous

@@ -4,7 +4,7 @@ source as (
   select
     id::int as position_id,
     plural_name_short::varchar as position,
-    _dlt_load_id::double as _dlt_load_id
+    _dlt_load_id::double as _dlt_load_id,
   from {{ source("fpl", "element_types") }}
 ),
 
