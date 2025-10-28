@@ -261,7 +261,7 @@ add_previous_three_rolling_sums as (
 add_minutes_played_rate as (
   select 
     *,
-    minutes/minutes_available as minutes_played_available,
+    minutes_total/minutes_available_total as minutes_played_available_total,
     minutes_last_3/minutes_available_last_3 as minutes_played_available_last_3,
   from add_previous_three_rolling_sums
 ),
@@ -299,6 +299,7 @@ select_columns as (
     minutes_available_total,
     minutes_available_last_3,
     minutes_played_available,
+    minutes_played_available_total,
     minutes_played_available_last_3,
 
     minutes,
