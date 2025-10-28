@@ -237,9 +237,12 @@ add_form_change as (
 add_minutes_available as (
   select 
     *,
-    case when availability <100 then coalesce(minutes, 0) else 90 end as minutes_available,
-    sum(case when availability <100 then coalesce(minutes, 0) else 90 end) over (partition by player_id order by gameweek) as minutes_available_total,
-    minutes / (case when availability <100 then coalesce(minutes, 0) else 90 end) as minutes_played_available,
+    case 
+      when availability in (0, 25) then 0 
+      when availability in (50, 75) then minutes
+      when availability=100 then 90 
+      end as minutes_available,
+    --minutes / (case when availability <100 then coalesce(minutes, 0) else 90 end) as minutes_played_available,
   from add_form_change
 ),
 
@@ -261,8 +264,8 @@ add_previous_three_rolling_sums as (
 add_minutes_played_rate as (
   select 
     *,
-    minutes_total/minutes_available_total as minutes_played_available_total,
-    minutes_last_3/minutes_available_last_3 as minutes_played_available_last_3,
+    --minutes_total/minutes_available_total as minutes_played_available_total,
+    --minutes_last_3/minutes_available_last_3 as minutes_played_available_last_3,
   from add_previous_three_rolling_sums
 ),
 
@@ -296,11 +299,11 @@ select_columns as (
     starts_total,
     availability,
     minutes_available,
-    minutes_available_total,
+    --minutes_available_total,
     minutes_available_last_3,
-    minutes_played_available,
-    minutes_played_available_total,
-    minutes_played_available_last_3,
+    --minutes_played_available,
+    --minutes_played_available_total,
+    --minutes_played_available_last_3,
 
     minutes,
     minutes_total,
