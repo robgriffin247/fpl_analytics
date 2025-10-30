@@ -79,3 +79,9 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
 - [ ] Linting
 - [ ] Workflow to deploy webapp
 - [ ] Slack/discord/email notice if pipeline fails
+
+
+
+------
+
+- clean up fixtures, standings, and core models;

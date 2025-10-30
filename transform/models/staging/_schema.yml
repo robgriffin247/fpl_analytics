@@ -7,7 +7,7 @@ models:
   - name: stg_gameweeks
     description: Most recent dlt load for each gameweek.
     tags: ["staging", "fpl"]
-  - name: stg_players
+  - name: stg_player_gameweek_stats
     description: Player statistics for each gameweek.
     tags: ["staging", "fpl"]
   - name: stg_positions

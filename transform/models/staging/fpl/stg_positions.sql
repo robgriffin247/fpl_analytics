@@ -8,7 +8,7 @@ source as (
   from {{ source("fpl", "element_types") }}
 ),
 
-most_recent as (
+most_recent_load as (
   select
     position_id,
     position
@@ -16,4 +16,4 @@ most_recent as (
   where _dlt_load_id = (select max(_dlt_load_id) from source)
 )
 
-select * from most_recent
+select * from most_recent_load

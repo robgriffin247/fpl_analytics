@@ -1,6 +1,5 @@
 with 
-
-teams as (
+source as (
   select
     id::int as team_id,
     short_name::varchar as team_abbreviation,
@@ -8,36 +7,14 @@ teams as (
     strength_defence_home::int as team_strength_home_defence,
     strength_attack_away::int as team_strength_away_attack,
     strength_defence_away::int as team_strength_away_defence,
-    _dlt_load_id
+    _dlt_load_id::double as _dlt_load_id
   from {{ source("fpl", "teams") }}
 ),
 
-/* TODO NEEDS REFACTORING */
-gameweeks as (
+most_recent_load as (
   select *
-  from {{ ref("stg_gameweeks") }}
-),
-
-latest_load_per_gameweek as (
-  select 
-    gameweek, 
-    max(_dlt_load_id) as _dlt_load_id 
-  from gameweeks 
-  where is_current group by 1
-),
-
-gameweek_to_teams as (
-  select 
-    teams.*,
-    latest_load_per_gameweek.gameweek as gameweek 
-  from teams
-    left join latest_load_per_gameweek using(_dlt_load_id)
-),
-
-select_latest_load as (
-  select * 
-  from gameweek_to_teams
-  where gameweek is not null
+  from source 
+  where _dlt_load_id = (select max(_dlt_load_id) from source)
 )
 
-select * from select_latest_load
+select * from most_recent_load

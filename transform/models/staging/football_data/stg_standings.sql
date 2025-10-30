@@ -3,6 +3,7 @@ with
 standings as (
   select
     position::int as position,
+    team_short_name::varchar as team,
     team_tla::varchar as team_abbreviation,
     played_games::int as games,
     won::int as wins,
