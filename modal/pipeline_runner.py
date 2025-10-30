@@ -58,8 +58,7 @@ def run_pipeline():
 
 
 @app.function(
-    secrets=[modal.Secret.from_name("motherduck-secret"), 
-             modal.Secret.from_name("football-data-api-key")],
+    secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
     image=image,
@@ -84,8 +83,7 @@ def fpl_only():
 
 
 @app.function(
-    secrets=[modal.Secret.from_name("motherduck-secret"), 
-             modal.Secret.from_name("football-data-api-key")],
+    secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
     image=image,
@@ -110,8 +108,7 @@ def football_data_only():
 
     
 @app.function(
-    secrets=[modal.Secret.from_name("motherduck-secret"), 
-             modal.Secret.from_name("football-data-api-key")],
+    secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
     image=image,
