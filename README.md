@@ -55,6 +55,9 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
             MOTHERDUCK_TOKEN=$MOTHERDUCK_TOKEN \
             DESTINATION__DUCKDB__CREDENTIALS=md:fpl_analytics \
             FOOTBALL_DATA_API_KEY=$FOOTBALL_DATA_API_KEY
+            DLT_DESTINATION=motherduck \
+            DESTINATION__MOTHERDUCK__DATABASE=fpl_analytics \
+            DBT_TARGET=prod
         ```
 
 1. Install python and dependencies

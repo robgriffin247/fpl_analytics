@@ -1,21 +1,21 @@
-version: 2
+# version: 2
 
-models:
-  - name: stg_fixtures
-    description: Table of fixtures for the season.
-    tags: ["staging", "football-data"]
-  - name: stg_gameweeks
-    description: Most recent dlt load for each gameweek.
-    tags: ["staging", "fpl"]
-  - name: stg_player_gameweek_stats
-    description: Player statistics for each gameweek.
-    tags: ["staging", "fpl"]
-  - name: stg_positions
-    description: Table decoding element_type into positions.
-    tags: ["staging", "fpl"]
-  - name: stg_standings
-    description: League table.
-    tags: ["staging", "football-data"]
-  - name: stg_teams
-    description: Table decoding team ids into team names/abbreviations and including attack/defence home/away strength.
-    tags: ["staging", "fpl"]
+# models:
+#   - name: stg_fixtures
+#     description: Table of fixtures for the season.
+#     tags: ["staging", "football-data"]
+#   - name: stg_gameweeks
+#     description: Most recent dlt load for each gameweek.
+#     tags: ["staging", "fpl"]
+#   - name: stg_player_gameweek_stats
+#     description: Player statistics for each gameweek.
+#     tags: ["staging", "fpl"]
+#   - name: stg_positions
+#     description: Table decoding element_type into positions.
+#     tags: ["staging", "fpl"]
+#   - name: stg_standings
+#     description: League table.
+#     tags: ["staging", "football-data"]
+#   - name: stg_teams
+#     description: Table decoding team ids into team names/abbreviations and including attack/defence home/away strength.
+#     tags: ["staging", "fpl"]

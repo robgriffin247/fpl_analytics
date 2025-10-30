@@ -1,7 +1,6 @@
 import dlt
 import httpx
 from typing import Iterator, Dict, Any
-from pathlib import Path
 from datetime import datetime
 import os
 
@@ -50,8 +49,8 @@ def load_from_football_data():
                 "away_score_half_time": match["score"]["halfTime"]["away"],
                 "winner": match["score"].get("winner"),
                 "duration": match["score"].get("duration"),
-                "venue": None,  # Not in free tier
-                "referees": [],  # Not in free tier
+                "venue": None,
+                "referees": [],
                 "extracted_at": datetime.now().isoformat(),
             }
 
@@ -87,9 +86,6 @@ def load_from_football_data():
                     "extracted_at": datetime.now().isoformat(),
                 }
 
-        data = response.json()
-
-
     @dlt.source
     def football_data_source():
         return [
@@ -97,25 +93,32 @@ def load_from_football_data():
             get_standings(),
         ]
 
-    pipeline = dlt.pipeline(
-        pipeline_name="fpl_analytics__football_data_pipeline",
-        destination=dlt.destinations.motherduck(
+    destination = os.getenv("DLT_DESTINATION", "duckdb")
+    
+    # Explicitly configure motherduck destination
+    if destination == "motherduck":
+        dest = dlt.destinations.motherduck(
             credentials={
                 "database": "fpl_analytics",
                 "motherduck_token": os.environ["MOTHERDUCK_TOKEN"]
             }
-        ),
+        )
+    else:
+        dest = dlt.destinations.duckdb(
+            credentials="data/fpl_analytics.duckdb"
+        )
+    
+    pipeline = dlt.pipeline(
+        pipeline_name="fpl_analytics__football_data_pipeline",
+        destination=dest,
         dataset_name="football_data",
     )
 
     load_info = pipeline.run(football_data_source())
-
     return load_info
 
 
 def load_fpl():
-    import os
-
     @dlt.resource(name="fpl_data", write_disposition="append")
     def get_data():
         url = "https://fantasy.premierleague.com/api/bootstrap-static/"
@@ -135,14 +138,24 @@ def load_fpl():
     def fpl_source():
         return get_data()
 
-    pipeline = dlt.pipeline(
-        pipeline_name="fpl_analytics__fpl_pipeline",
-        destination=dlt.destinations.motherduck(
+    destination = os.getenv("DLT_DESTINATION", "duckdb")
+    
+    # Explicitly configure motherduck destination
+    if destination == "motherduck":
+        dest = dlt.destinations.motherduck(
             credentials={
                 "database": "fpl_analytics",
                 "motherduck_token": os.environ["MOTHERDUCK_TOKEN"]
             }
-        ),
+        )
+    else:
+        dest = dlt.destinations.duckdb(
+            credentials="data/fpl_analytics.duckdb"
+        )
+    
+    pipeline = dlt.pipeline(
+        pipeline_name="fpl_analytics__fpl_pipeline",
+        destination=dest,
         dataset_name="fpl",
     )
 

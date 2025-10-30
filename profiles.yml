@@ -1,12 +1,14 @@
 transform:
-  target: dev
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
   outputs:
     dev:
       type: duckdb
-      path: md:fpl_analytics
-      #path: data/fpl_analytics.duckdb
-      schema: dbt
+      path: data/fpl_analytics.duckdb
+      schema: staging
+      threads: 1
+    
+    prod:
+      type: duckdb
+      path: "md:fpl_analytics?motherduck_token={{ env_var('MOTHERDUCK_TOKEN') }}"
+      schema: staging
       threads: 4
-      extensions:
-        - motherduck
-      motherduck_token: "{{ env_var('MOTHERDUCK_TOKEN') }}"

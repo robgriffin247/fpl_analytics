@@ -1,9 +1,9 @@
-version: 2
+# version: 2
 
-models:
-  - name: int_players
-    description: Player statistics per gameweek with decoded team and position, plus fixture/opponent details added.
-  - name: int_standings
-    description: League table.
-  - name: int_team_fixtures
-    description: Table of each teams fixtures per gameweek. Contains rolling upcoming fixtures and prospect biases.
+# models:
+#   - name: int_players
+#     description: Player statistics per gameweek with decoded team and position, plus fixture/opponent details added.
+#   - name: int_standings
+#     description: League table.
+#   - name: int_team_fixtures
+#     description: Table of each teams fixtures per gameweek. Contains rolling upcoming fixtures and prospect biases.
