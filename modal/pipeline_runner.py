@@ -21,8 +21,7 @@ image = (
 
 @app.function(
     schedule=modal.Cron('30 4 * * *'),
-    secrets=[modal.Secret.from_name("motherduck-secret"), 
-             modal.Secret.from_name("football-data-api-key")],
+    secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
     image=image,

@@ -1,146 +1,144 @@
 import streamlit as st
 import duckdb
+from loaders import load_obt_player_gameweek_stats
 import polars as pl
-from loaders import load_obt_players_df, load_gameweek_players_df
-from visuals import render_stats_table, goal_xg_plot
 
-# FRONT END =================================================================================
-st.set_page_config(layout="wide", page_title="FPL Analytics")
-
-st.header("Analytics")
-t1, t2, t3 = st.tabs(["Stats", "Compare", "Fixtures & Standings"])
-
-
-with t2:
-    player_selector = st.container()
-
-with t3:
-    standings_table = st.container()
-
-# BACK END ==================================================================================
-# General
-obt_players_df = load_obt_players_df()
-gameweek_players_df = load_gameweek_players_df(obt_players_df)
 
 def get_range(column):
-    return [gameweek_players_df[column].min(), gameweek_players_df[column].max()]
+    return [column.min(), column.max()]
 
-def get_options(column, sort=None):
-    if sort!=None:
-        return gameweek_players_df[[column, sort]].unique().sort(pl.col(sort))[column].to_list()
-    
-    return gameweek_players_df[[column]].unique().sort(pl.col(column))[column].to_list()
+def create_slider(column, title, hint=None):
+    _range = get_range(gameweek_scouting_df[column])
+    return st.slider(title, 
+                     value=_range, 
+                     min_value=_range[0], 
+                     max_value=_range[1], 
+                     key=f"selected_{column}",
+                     help=hint)
 
-position_options = get_options("position", "position_id")
-player_options = get_options("player_team", "player_id")
-team_options = get_options("team")
-
-cost_range = get_range("cost")
-form_range = get_range("form")
-availability_range = get_range("availability")
-
-appearances_range = get_range("appearances_total")
-starts_range = get_range("starts_total")
-minutes_gameweek_range = get_range("minutes_gameweek")
-
-points_gameweek_range = get_range("points_gameweek")
-defending_prospects_range = get_range("defending_prospects_next_3")
-attacking_prospects_range = get_range("attacking_prospects_next_3")
-
-
-# T1
-with t1:
-    
-    t1_c1, t1_c2, t1_c3, t1_c4 = st.columns([5,3,3,3], gap="large")
-
-    selected_positions = t1_c1.multiselect("Positon(s)", options=position_options)
-    selected_players_t1 = t1_c1.multiselect("Player(s)", options=player_options, key="selected_players_t1")
-    selected_teams = t1_c1.multiselect("Team(s)", options=team_options)
-
-    selected_cost = t1_c2.slider("Cost (£M)", value=cost_range, min_value=cost_range[0], max_value=cost_range[1], step=0.1)
-    selected_form = t1_c2.slider("Form", value=form_range, min_value=form_range[0], max_value=form_range[1], step=0.1)
-    selected_availability = t1_c2.slider("Availability", value=availability_range, min_value=availability_range[0], max_value=availability_range[1], step=25)
-
-    selected_appearances = t1_c3.slider("Appearances", value=appearances_range, min_value=appearances_range[0], max_value=appearances_range[1], step=1)
-    selected_starts = t1_c3.slider("Starts", value=starts_range, min_value=starts_range[0], max_value=starts_range[1], step=1)
-    selected_minutes_gameweek = t1_c3.slider("Mins/GW", value=minutes_gameweek_range, min_value=minutes_gameweek_range[0], max_value=minutes_gameweek_range[1], step=1.0)
-
-    selected_defending_prospects = t1_c4.slider("Def. Prospects", value=defending_prospects_range, min_value=defending_prospects_range[0], max_value=defending_prospects_range[1], step=1.0)
-    selected_attacking_prospects = t1_c4.slider("Att. Prospects", value=attacking_prospects_range, min_value=attacking_prospects_range[0], max_value=attacking_prospects_range[1], step=1.0)
-    selected_points_gameweek = t1_c4.slider("Pts/GW", value=points_gameweek_range, min_value=points_gameweek_range[0], max_value=points_gameweek_range[1], step=1.0)
-
-    st.divider()
-
+def get_latest_stats_df():
     with duckdb.connect() as con:
-        filtered_gameweek_players_df = con.sql(
-            f"""
-                select 
-                    player_team, 
-                    position,
-                    cost,
-                    --availability,
-                    form,
-                    form_change_last_3,
-                    --dreamteam,
-                    --dreamteam_appearances,
-                    minutes_total,
-                    minutes_last_3,
-                    minutes_gameweek,
-                    points_total,
-                    points_last_3,
-                    points_gameweek,
-                    points_90,
-                    points_cost,
-                    goals_total,
-                    --goals_last_3,
-                    --xgoals_last_3,
-                    xgoals_total,
-                    g_xg_total,
-                    --g_xg_last_3,
-                    fixtures_next_3,
-                    prospects_icon_next_3,
-                    defending_prospects_next_3,
-                    attacking_prospects_next_3,
-
-
-                from gameweek_players_df 
-                where true 
-                    and position in {selected_positions if len(selected_positions)>0 else position_options}
-                    and player_team in {selected_players_t1 if len(selected_players_t1)>0 else player_options}
-                    and team in {selected_teams if len(selected_teams)>0 else team_options}
-                    and cost between {selected_cost[0]} and {selected_cost[1]}
-                    and form between {selected_form[0]} and {selected_form[1]}
-                    and availability between {selected_availability[0]} and {selected_availability[1]}
-                    and appearances_total between {selected_appearances[0]} and {selected_appearances[1]}
-                    and starts_total between {selected_starts[0]} and {selected_starts[1]}
-                    and minutes_gameweek between {selected_minutes_gameweek[0]} and {selected_minutes_gameweek[1]}
-                    and defending_prospects_next_3 between {selected_defending_prospects[0]} and {selected_defending_prospects[1]}
-                    and attacking_prospects_next_3 between {attacking_prospects_range[0]} and {attacking_prospects_range[1]}
-                    and points_gameweek between {selected_points_gameweek[0]} and {selected_points_gameweek[1]}
-
-            """).pl()
-
-    render_stats_table(filtered_gameweek_players_df)
-
-    c1, c2, c3, c4 = st.columns(4)
-    c1.plotly_chart(goal_xg_plot(filtered_gameweek_players_df))
+        df = con.sql(f"""
+        select 
+            player,
+            team,
+            position,
+            cost,
+            minutes_gw,
+            minutes_last_3,
+            points_gw,
+            points_last_3,
+            points_90,
+            points_cost_gw,
+            goals_total,
+            goals_gw,
+            xgoals_total,
+            xgoals_gw,
+            goals_total_xratio,
+            availability_next,
+            xpoints_next,
+            next_fixtures,
+            form_icons,
+            next_fixture_form_icons,
+            form_points,
+            next_fixture_form_points,
+            form_scored,
+            next_fixture_form_scored,
+            form_conceded,
+            next_fixture_form_conceded
+        from gameweek_scouting_df
+        where true 
+            and minutes_gw between {st.session_state["selected_minutes_gw"][0]-0.01} and {st.session_state["selected_minutes_gw"][1]+0.01}
+            and minutes_last_3 between {st.session_state["selected_minutes_last_3"][0]-0.01} and {st.session_state["selected_minutes_last_3"][1]+0.01}
+            and points_gw between {st.session_state["selected_points_gw"][0]-0.01} and {st.session_state["selected_points_gw"][1]+0.01}
+            and availability_next between {st.session_state["selected_availability_next"][0]-0.01} and {st.session_state["selected_availability_next"][1]+0.01}
+            and cost between {st.session_state["selected_cost"][0]-0.01} and {st.session_state["selected_cost"][1]+0.01}
+            and points_cost_gw between {st.session_state["selected_points_cost_gw"][0]-0.01} and {st.session_state["selected_points_cost_gw"][1]+0.01}
+            and form between {st.session_state["selected_form"][0]-0.01} and {st.session_state["selected_form"][1]+0.01}
+            and xgoals_gw between {st.session_state["selected_xgoals_gw"][0]} and {st.session_state["selected_xgoals_gw"][1]+0.01}
+            and xpoints_next between {st.session_state["selected_xpoints_next"][0]-0.01} and {st.session_state["selected_xpoints_next"][1]+0.01}
+            and form_points between {st.session_state["selected_form_points"][0]-0.01} and {st.session_state["selected_form_points"][1]+0.01}
+            and form_scored between {st.session_state["selected_form_scored"][0]-0.01} and {st.session_state["selected_form_scored"][1]+0.01}
+            and form_conceded between {st.session_state["selected_form_conceded"][0]-0.01} and {st.session_state["selected_form_conceded"][1]+0.01}
+        order by position_id, points_cost_gw desc
+        """).pl()
+    return df
 
 
 
+# FRONTEND ========================================================================================
+st.set_page_config(layout="wide", page_title="FPL Analytics")
+st.header("Analytics")
+st.divider()
+c1, c2, c3, c4, c5 = st.columns([4,2,2,2,2], gap="large")
+st.html("<br/>")
+stats_table = st.container()
+st.divider()
 
-# T2
-selected_players_t2 = player_selector.multiselect("Player(s)", options=player_options, max_selections=5, key="selected_players_t2")
 
-with duckdb.connect() as con:
-    filtered_players_df = (con.sql(
-        f"""select * 
-            from obt_players_df 
-            where player_team in {selected_players_t2}
-            """).pl())
 
-with t2:
-    if filtered_players_df.shape[0] > 0:
-        st.dataframe(filtered_players_df)
 
+# BACKEND =========================================================================================
+player_gameweek_stats = load_obt_player_gameweek_stats()
+
+# make dynamic
+gameweek_scouting_df = player_gameweek_stats.filter(pl.col("gameweek")==9)
+
+with c1:
+    # make dynamic and add select to duck in get_latest_stats_table()
+    st.multiselect("Position", options=["GKP", "DEF", "MID", "FWD"])
+    st.multiselect("Player", options=["Cash"])
+    st.multiselect("Team", options=["AVL"])
+
+with c2:
+    create_slider("minutes_gw", "Minutes/wk")
+    create_slider("minutes_last_3", "Minutes/wk (last 3)", hint="Average minutes played during the last three gameweeks.")
+    create_slider("cost", "Cost")
+
+with c3:
+    create_slider("points_gw", "Points/wk")
+    create_slider("form", "Points/wk (last 3)", hint="Average points scored during the last three gameweeks. This is player form of Fantasy PL.")
+    create_slider("availability_next", "Availability (%)", hint="Likelihood of being available according to Fantasy PL.")
+
+with c4:
+    create_slider("points_cost_gw", "Points/£M/wk", hint="Points earned over season, divided by current cost and per gameweek; a measure of value-for-money.")
+    create_slider("xgoals_gw", "xGoals/wk", hint="Expected goals per gameweek.")
+    create_slider("xpoints_next", "xPoints", hint="Expected points in next fixture.")
+
+with c5:
+    create_slider("form_points", "Team Form: Points", hint="Average points per game for the player's team during the last 5 gameweeks.")
+    create_slider("form_scored", "Team Form: Scored", hint="Average goals scored per game for the player's team during the last 5 gameweeks.")
+    create_slider("form_conceded", "Team Form: Conceded", hint="Average goals conceded per game for the player's team during the last 5 gameweeks.")
     
+with stats_table:
+    st.dataframe(get_latest_stats_df(),
+                 column_config={
+                     "player":st.column_config.TextColumn("Player"),
+                     "team":st.column_config.TextColumn("Team"),
+                     "position":st.column_config.TextColumn("Position"),
+                     "cost":st.column_config.NumberColumn("Cost", format="%.1f"),
+                     "minutes_gw":st.column_config.NumberColumn("Mins/wk", format="%.0f"),
+                     "minutes_last_3":st.column_config.NumberColumn("Mins (3)", format="%.0f"),
+                     "points_gw":st.column_config.NumberColumn("Pts/wk", format="%.1f"),
+                     "points_last_3":st.column_config.NumberColumn("Pts (3)", format="%.1f"),
+                     "points_90":st.column_config.NumberColumn("Pts/90", format="%.1f"),
+                     "points_90":st.column_config.NumberColumn("Pts/90", format="%.1f"),
+                     "points_cost_gw":st.column_config.NumberColumn("Pts/£M/wk", format="%.1f"),
+                     "goals_total":st.column_config.NumberColumn("Goals", format="%.0f"),
+                     "goals_gw":st.column_config.NumberColumn("Goals/wk", format="%.2f"),
+                     "xgoals_total":st.column_config.NumberColumn("xGoals", format="%.2f"),
+                     "xgoals_gw":st.column_config.NumberColumn("xGoals/wk", format="%.2f"),
+                     "goals_total_xratio":st.column_config.NumberColumn("xG Conv.", format="%.2f"),
+                     "availability_next":st.column_config.NumberColumn("Av. (%)", format="%.0f"),
+                     "xpoints_next":st.column_config.NumberColumn("xPts", format="%.1f"),
+                     "next_fixtures":st.column_config.TextColumn("Fixtures"),
+                     "form_icons":st.column_config.TextColumn("Team Form (TF)"),
+                     "next_fixture_form_icons":st.column_config.TextColumn("Opp. Form (OF)"),
+                     "form_points":st.column_config.NumberColumn("TF (Pts)", format="%.1f"),
+                     "next_fixture_form_points":st.column_config.NumberColumn("OF (Pts)", format="%.1f"),
+                     "form_scored":st.column_config.NumberColumn("TF (GF)", format="%.1f"),
+                     "next_fixture_form_scored":st.column_config.NumberColumn("OF (GF)", format="%.1f"),
+                     "form_conceded":st.column_config.NumberColumn("TF (GA)", format="%.1f"),
+                     "next_fixture_form_conceded":st.column_config.NumberColumn("OF (GA)", format="%.1f"),
 
+                     })

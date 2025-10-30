@@ -36,6 +36,7 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
 - Prerequisites:
     - Motherduck account and [token](https://app.motherduck.com/settings/tokens)
     - Account and API key for [football-data.org](https://www.football-data.org/documentation/quickstart/)
+    - Modal account
 
 1.  Clone
 
@@ -46,8 +47,15 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
     
 1. Set up secrets/tokens
     1. Run ``cp .env_template .env``
-    1. Add values to the ``.env``
+    1. Add values for your secrets/tokens to the ``.env``
     1. Run ``direnv allow``
+    1. Send into modal
+        ```
+        modal secret create fpl-analytics-secrets \
+            MOTHERDUCK_TOKEN=$MOTHERDUCK_TOKEN \
+            DESTINATION__DUCKDB__CREDENTIALS=md:fpl_analytics \
+            FOOTBALL_DATA_API_KEY=$FOOTBALL_DATA_API_KEY
+        ```
 
 1. Install python and dependencies
 
