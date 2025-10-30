@@ -4,7 +4,9 @@ stats as (
   select
     player_id,
     player,
+    team_id,
     team,
+    position_id,
     position,
     gameweek,
     cost,

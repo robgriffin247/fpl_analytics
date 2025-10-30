@@ -44,7 +44,7 @@ gameweeks as (
 
 merge_data as (
   select
-    player_gameweek_stats.* exclude(team_id, position_id, _dlt_load_id),
+    player_gameweek_stats.*,
     teams.team_abbreviation as team,
     positions.position,
     gameweeks.gameweek
@@ -58,7 +58,9 @@ variable_fixes as (
   select
     player_id,
     replace(player, '''', '') as player,
+    team_id,
     team,
+    position_id,
     position,
     gameweek,
     coalesce(cost/10, 0) as cost,
@@ -121,7 +123,9 @@ select_columns as (
   select
     player_id,
     player,
+    team_id,
     team,
+    position_id,
     position,
     gameweek,
     cost,

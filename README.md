@@ -81,7 +81,3 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
 - [ ] Slack/discord/email notice if pipeline fails
 
 
-
-------
-
-- clean up fixtures, standings, and core models;
