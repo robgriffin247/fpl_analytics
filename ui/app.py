@@ -83,7 +83,6 @@ player_gameweek_stats = load_obt_player_gameweek_stats()
 
 # make dynamic
 gameweek_scouting_df = player_gameweek_stats.filter(pl.col("gameweek")==9)
-
 with c1:
     # make dynamic and add select to duck in get_latest_stats_table()
     st.multiselect("Position", options=["GKP", "DEF", "MID", "FWD"])
