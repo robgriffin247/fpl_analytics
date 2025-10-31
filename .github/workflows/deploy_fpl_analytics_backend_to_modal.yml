@@ -1,4 +1,4 @@
-name: Deploy Modal Pipeline Runner
+name: Deploy FPL Analytics Backend to Modal
 
 on:
   push:
@@ -32,4 +32,4 @@ jobs:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
         run: |
-          uv run modal deploy modal/pipeline_runner.py
+          uv run modal deploy modal/fpl_analytics_backend.py
