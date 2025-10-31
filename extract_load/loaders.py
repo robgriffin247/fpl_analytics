@@ -10,15 +10,12 @@ def load_football_data():
     headers = {"X-Auth-Token": api_key}
     base_url = "https://api.football-data.org/v4/competitions/PL/"
 
-    @dlt.resource(
-        name="fixtures", 
-        write_disposition="replace"
-    )
+    @dlt.resource(name="fixtures", write_disposition="replace")
     def get_fixtures() -> Iterator[Dict[str, Any]]:
         url = f"{base_url}matches"
         response = httpx.get(url, headers=headers)
         response.raise_for_status()
-        
+
         data = response.json()
 
         for match in data.get("matches", []):
@@ -59,9 +56,9 @@ def load_football_data():
         url = f"{base_url}standings"
         response = httpx.get(url, headers=headers)
         response.raise_for_status()
-        
+
         data = response.json()
-        
+
         for standing_type in data.get("standings", []):
             for position in standing_type.get("table", []):
                 yield {
@@ -94,20 +91,18 @@ def load_football_data():
         ]
 
     destination = os.getenv("DLT_DESTINATION", "duckdb")
-    
+
     # Explicitly configure motherduck destination
     if destination == "motherduck":
         dest = dlt.destinations.motherduck(
             credentials={
                 "database": "fpl_analytics",
-                "motherduck_token": os.environ["MOTHERDUCK_TOKEN"]
+                "motherduck_token": os.environ["MOTHERDUCK_TOKEN"],
             }
         )
     else:
-        dest = dlt.destinations.duckdb(
-            credentials="data/fpl_analytics.duckdb"
-        )
-    
+        dest = dlt.destinations.duckdb(credentials="data/fpl_analytics.duckdb")
+
     pipeline = dlt.pipeline(
         pipeline_name="fpl_analytics__football_data_pipeline",
         destination=dest,
@@ -139,20 +134,18 @@ def load_fpl():
         return get_data()
 
     destination = os.getenv("DLT_DESTINATION", "duckdb")
-    
+
     # Explicitly configure motherduck destination
     if destination == "motherduck":
         dest = dlt.destinations.motherduck(
             credentials={
                 "database": "fpl_analytics",
-                "motherduck_token": os.environ["MOTHERDUCK_TOKEN"]
+                "motherduck_token": os.environ["MOTHERDUCK_TOKEN"],
             }
         )
     else:
-        dest = dlt.destinations.duckdb(
-            credentials="data/fpl_analytics.duckdb"
-        )
-    
+        dest = dlt.destinations.duckdb(credentials="data/fpl_analytics.duckdb")
+
     pipeline = dlt.pipeline(
         pipeline_name="fpl_analytics__fpl_pipeline",
         destination=dest,

@@ -18,8 +18,9 @@ image = (
     .add_local_file(PROJECT_ROOT / "profiles.yml", "/root/profiles.yml")
 )
 
+
 @app.function(
-    schedule=modal.Cron('30 4 * * *'),
+    schedule=modal.Cron("30 4 * * *"),
     secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
@@ -27,29 +28,29 @@ image = (
 )
 def run_pipeline():
     sys.path.insert(0, "/root")
-        
+
     print(f"Running pipeline ({datetime.datetime.now()})... ")
 
     results = {}
-    
+
     try:
         print("📥 Loading FPL player data...")
         fpl_result = load_fpl()
-        results['fpl'] = fpl_result
+        results["fpl"] = fpl_result
         print(f"✅ {fpl_result}")
-        
+
         print("📥 Loading football-data...")
         football_data_result = load_football_data()
-        results['football_data'] = football_data_result
+        results["football_data"] = football_data_result
         print(f"✅ {football_data_result}")
-        
+
         print("🔄 Running dbt transformations...")
         dbt_result = run_dbt_transformations()
-        results['dbt'] = dbt_result
+        results["dbt"] = dbt_result
         print(f"✅ {dbt_result}")
-        
+
         return results
-        
+
     except Exception as e:
         print(f"❌ Pipeline failed: {e}")
         raise
@@ -63,13 +64,13 @@ def run_pipeline():
 )
 def load_fpl_job():
     sys.path.insert(0, "/root")
-        
+
     results = {}
 
     try:
         print("📥 Loading FPL player data...")
         fpl_result = load_fpl()
-        results['fpl'] = fpl_result
+        results["fpl"] = fpl_result
         print(f"✅ {fpl_result}")
 
         return results
@@ -77,7 +78,6 @@ def load_fpl_job():
     except Exception as e:
         print(f"❌ Run failed: {e}")
         raise
-
 
 
 @app.function(
@@ -88,13 +88,13 @@ def load_fpl_job():
 )
 def load_footall_data_job():
     sys.path.insert(0, "/root")
-        
+
     results = {}
 
     try:
         print("📥 Loading football-data...")
         football_data_result = load_football_data()
-        results['football_data'] = football_data_result
+        results["football_data"] = football_data_result
         print(f"✅ {football_data_result}")
 
         return results
@@ -104,7 +104,6 @@ def load_footall_data_job():
         raise
 
 
-    
 @app.function(
     secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
@@ -113,13 +112,13 @@ def load_footall_data_job():
 )
 def dbt_transform_job():
     sys.path.insert(0, "/root")
-        
+
     results = {}
 
     try:
         print("🔄 Running dbt transformations...")
         dbt_result = run_dbt_transformations()
-        results['dbt'] = dbt_result
+        results["dbt"] = dbt_result
         print(f"✅ {dbt_result}")
 
         return results
