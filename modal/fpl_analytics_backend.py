@@ -7,8 +7,6 @@ import sys
 
 PROJECT_ROOT = Path(__file__).parent.parent
 
-app = modal.App("fpl-analytics-backend")
-
 image = (
     modal.Image.debian_slim()
     .pip_install("dlt[motherduck]", "dbt-duckdb", "httpx")
@@ -18,13 +16,15 @@ image = (
     .add_local_file(PROJECT_ROOT / "profiles.yml", "/root/profiles.yml")
 )
 
+app = modal.App("fpl-analytics-backend", image=image)
+
 
 @app.function(
     schedule=modal.Cron("30 4 * * *"),
     secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
-    image=image,
+    # image=image,
 )
 def run_pipeline():
     sys.path.insert(0, "/root")
@@ -60,7 +60,7 @@ def run_pipeline():
     secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
-    image=image,
+    # image=image,
 )
 def load_fpl_job():
     sys.path.insert(0, "/root")
@@ -84,7 +84,7 @@ def load_fpl_job():
     secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
-    image=image,
+    # image=image,
 )
 def load_footall_data_job():
     sys.path.insert(0, "/root")
@@ -108,7 +108,7 @@ def load_footall_data_job():
     secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,
     timeout=300,
-    image=image,
+    # image=image,
 )
 def dbt_transform_job():
     sys.path.insert(0, "/root")

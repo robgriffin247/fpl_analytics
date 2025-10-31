@@ -82,13 +82,14 @@ Data is visualised in a Streamlit app (under construction). This will be hosted 
     uv run streamlit run ui/app.py
     ```
 
+*Note - if these instructions are missing something then let me know!*
+
 ## Tasks/Ideas
 
-- [ ] Add some rolling stats; points last five / 5, minutes last five / 5
 - [ ] Develop UI
 - [ ] Host UI on modal
-- [ ] Linting
 - [ ] Workflow to deploy webapp
+- [ ] Linting
 - [ ] Slack/discord/email notice if pipeline fails
-
+- [ ] Analytics: matomo?
 

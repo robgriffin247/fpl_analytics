@@ -2,6 +2,7 @@ import duckdb
 import streamlit as st
 import polars as pl
 import emoji
+import os 
 
 from utils import get_sorted_options
 
@@ -15,7 +16,8 @@ cache_hours = 12
 )
 def load_obt_player_gameweek_stats():
     with duckdb.connect(
-        f"md:{st.secrets['connections']['fpl_analytics']['database']}"
+        # f"md:{st.secrets['connections']['fpl_analytics']['database']}"
+        f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
     ) as con:
         # with duckdb.connect(f"data/fpl_analytics.duckdb") as con:
         return (
