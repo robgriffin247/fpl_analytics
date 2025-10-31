@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 
-def load_from_football_data():
+def load_football_data():
     api_key = os.getenv("FOOTBALL_DATA_API_KEY")
     headers = {"X-Auth-Token": api_key}
     base_url = "https://api.football-data.org/v4/competitions/PL/"

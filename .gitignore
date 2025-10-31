@@ -11,3 +11,7 @@ dbt_packages/
 
 __pycache__/
 fpl_analytics.egg-info/
+
+data/
+*.duckdb.backup*
+*.duckdb

@@ -32,7 +32,7 @@ most_recent_load_per_gameweek as (
   select
     *
   from source
-  where _dlt_load_id in (select _dlt_load_id from staging.stg_gameweeks) 
+  where _dlt_load_id in (select _dlt_load_id from {{ref("stg_gameweeks")}} ) 
 )
 
 select * from most_recent_load_per_gameweek

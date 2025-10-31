@@ -1,7 +1,7 @@
 import modal
 import datetime
 from pathlib import Path
-from extract_load.loaders import load_fpl, load_from_football_data
+from extract_load.loaders import load_fpl, load_football_data
 from transform.transformer import run_dbt_transformations
 import sys
 
@@ -40,7 +40,7 @@ def run_pipeline():
         print(f"✅ {fpl_result}")
         
         print("📥 Loading football-data...")
-        football_data_result = load_from_football_data()
+        football_data_result = load_football_data()
         results['football_data'] = football_data_result
         print(f"✅ {football_data_result}")
         
@@ -63,7 +63,7 @@ def run_pipeline():
     timeout=300,
     image=image,
 )
-def fpl_only():
+def load_fpl_job():
     sys.path.insert(0, "/root")
         
     results = {}
@@ -88,14 +88,14 @@ def fpl_only():
     timeout=300,
     image=image,
 )
-def football_data_only():
+def load_footall_data_job():
     sys.path.insert(0, "/root")
         
     results = {}
 
     try:
         print("📥 Loading football-data...")
-        football_data_result = load_from_football_data()
+        football_data_result = load_football_data()
         results['football_data'] = football_data_result
         print(f"✅ {football_data_result}")
 
@@ -113,7 +113,7 @@ def football_data_only():
     timeout=300,
     image=image,
 )
-def dbt_only():
+def dbt_transform_job():
     sys.path.insert(0, "/root")
         
     results = {}

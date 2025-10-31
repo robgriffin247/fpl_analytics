@@ -5,10 +5,10 @@ transform:
       type: duckdb
       path: data/fpl_analytics.duckdb
       schema: staging
-      threads: 1
+      threads: 2
     
     prod:
       type: duckdb
       path: "md:fpl_analytics?motherduck_token={{ env_var('MOTHERDUCK_TOKEN') }}"
       schema: staging
-      threads: 4
+      threads: 2
