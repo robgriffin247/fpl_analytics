@@ -1,15 +1,14 @@
-name: Deploy FPL Analytics Backend to Modal
+name: Deploy FPL Analytics Frontend to Modal
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'modal/fpl_analytics_backend.py'
-      - 'extract_load/**'
-      - 'transform/**'
+      - 'modal/fpl_analytics_frontend.py'
+      - 'ui/**'
       - 'pyproject.toml'
-      - '.github/workflows/deploy_fpl_analytics_backend_to_modal.yml'
+      - '.github/workflows/deploy_fpl_analytics_frontend_to_modal.yml'
 
 jobs:
   deploy:
@@ -32,4 +31,4 @@ jobs:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
         run: |
-          uv run modal deploy modal/fpl_analytics_backend.py
+          uv run modal deploy modal/fpl_analytics_frontend.py
