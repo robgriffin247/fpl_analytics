@@ -86,10 +86,23 @@ Data is visualised in a Streamlit app (under construction), hosted with Modal an
 
 ## Tasks/Ideas
 
-- [ ] Develop UI
-- [ ] Host UI on modal
-- [ ] Workflow to deploy webapp
-- [ ] Linting
-- [ ] Slack/discord/email notice if pipeline fails
+- [x] Setup version control with git 
+- [x] Setup package management with uv
+- [x] Load data from FPL using dlt
+- [x] Load data from Football-Data.org using dlt
+- [x] Transform data using dbt
+- [x] Script to copy motherduck db to local
+- [x] Create a modal cron job to run ELT process
+- [x] Setup local and prod environments in dlt/dbt/modal
+- [x] Github workflow to handle CD of backend
+- [x] Create a streamlit UI with overview of player stats for the coming gameweek
+- [x] Host UI on modal
+- [x] Github workflow to handle CD of webapp
+- [ ] Add to UI
+    - [ ] Trends for selected players
+    - [ ] Standings and fixtures
+    - [ ] Metrics widgets
+- [ ] Automate linting?
+- [ ] Slack/discord/email notice if ELT fails?
 - [ ] Analytics: matomo?
 
