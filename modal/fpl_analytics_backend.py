@@ -7,17 +7,16 @@ import sys
 
 PROJECT_ROOT = Path(__file__).parent.parent
 
-app = modal.App("fpl-analytics")
+app = modal.App("fpl-analytics-backend")
 
 image = (
     modal.Image.debian_slim()
     .pip_install("dlt[motherduck]", "dbt-duckdb", "httpx")
     .add_local_dir(PROJECT_ROOT / "extract_load", "/root/extract_load")
     .add_local_dir(PROJECT_ROOT / "transform", "/root/transform")
-    .add_local_file(PROJECT_ROOT / "dbt_project.yml", "/root/dbt_project.yml")  # ADD THIS
-    .add_local_file(PROJECT_ROOT / "profiles.yml", "/root/profiles.yml")  # ADD THIS if you have it
+    .add_local_file(PROJECT_ROOT / "dbt_project.yml", "/root/dbt_project.yml")
+    .add_local_file(PROJECT_ROOT / "profiles.yml", "/root/profiles.yml")
 )
-
 
 @app.function(
     schedule=modal.Cron('30 4 * * *'),

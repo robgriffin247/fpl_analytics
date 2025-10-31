@@ -165,4 +165,4 @@ def load_fpl():
 
 if __name__ == "__main__":
     load_fpl()
-    load_from_football_data()
+    load_football_data()
