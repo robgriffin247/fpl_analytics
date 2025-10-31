@@ -134,7 +134,7 @@ with footer_container.expander("Guide"):
     - Mins: Minutes played
     - Pts: Points scored
     - .../wk: Gameweek average of metric over the season
-    - ... (3): Gameweek average of metric over the last three gameweeks 
+    - ... (last 3): Gameweek average of metric over the last three gameweeks 
     - xGoals: Expected goals
     - xG Conv.: Expected goal conversion rate (Goals / xGoals)
     - Av. (%): Availability for the coming gameweek, as % likelihood available
