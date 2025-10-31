@@ -6,8 +6,9 @@ logs/
 dbt_packages/
 __pycache__/
 *.egg-info/
-data/
-*.duckdb
+# data/ # this is not sensitive data and good to have backups somewhere!
+# *.duckdb
+*.duckdb.backup.*
 *.pyc
 .pytest_cache/
 *.log

@@ -19,7 +19,7 @@ The project requires a back-end that automatically and routinely extracts, loads
 - modal to host the web app
 - github workflows for continuous deployment
 
-![alt text](datastack.png)
+![alt text](documentation/datastack.png)
 
 #### Design
 
