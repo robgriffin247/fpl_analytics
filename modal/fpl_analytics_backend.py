@@ -55,7 +55,6 @@ def run_pipeline():
         raise
 
 
-
 @app.function(
     secrets=[modal.Secret.from_name("fpl-analytics-secrets")],
     retries=2,

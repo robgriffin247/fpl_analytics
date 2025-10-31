@@ -5,7 +5,6 @@ import emoji
 
 cache_hours = 12
 
-
 @st.cache_data(
     ttl=cache_hours*60*60,
     max_entries=100,
