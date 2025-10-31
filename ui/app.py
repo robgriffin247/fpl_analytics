@@ -13,7 +13,7 @@ from inputs import create_slider
 
 # FRONTEND ========================================================================================
 st.set_page_config(layout="wide", page_title="FPL Analytics")
-st.header("Analytics")
+st.header("FPL Analytics")
 
 player_stats = load_obt_player_gameweek_stats()
 with duckdb.connect() as con:
@@ -29,6 +29,7 @@ with duckdb.connect() as con:
 c1, c2, c3, c4, c5 = st.columns([4, 2, 2, 2, 2], gap="large")
 st.html("<br/>")
 stats_table = st.container()
+footer_container = st.container()
 
 #with t2:
 #    trends_df = st.container()
@@ -127,8 +128,25 @@ filtered_current_player_stats = filter_current_player_stats(current_player_stats
 with stats_table:
     render_filtered_current_player_stats(filtered_current_player_stats)
 
-with trends_df:
-    st.dataframe(player_stats)
+with footer_container.expander("Guide"):
+
+    st.markdown("""
+    - Mins: Minutes played
+    - Pts: Points scored
+    - .../wk: Gameweek average of metric over the season
+    - ... (3): Gameweek average of metric over the last three gameweeks 
+    - xGoals: Expected goals
+    - xG Conv.: Expected goal conversion rate (Goals / xGoals)
+    - Av. (%): Availability for the coming gameweek, as % likelihood available
+    - xPts: Expected points in coming gameweek (tightly linked to Pts (3), which is player form)
+    - TF: Team form over last 5 gameweeks, average of metric
+    - OF: Opponent form over last 5 gameweeks, average of metric
+    - ... (GF): Goals scored by the team/opponent
+    - ... (GA): Goals conceded by the team/opponent
+    """)
+
+# with trends_df:
+#     st.dataframe(player_stats)
 
 
 # if __name__ == "__main__":
