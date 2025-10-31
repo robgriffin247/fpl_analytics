@@ -29,7 +29,7 @@ Data is then transformed using dbt to create datasets ready for use in the UI. D
 
 A Modal app with a cron schedule is used to run the two dlt pipelines and the dbt transformations every day. Data can be explored via the [motherduck web UI](https://app.motherduck.com/). When changes are committed to main, a Github workflow triggers a redeployment of the pipeline runner app if there have been any changes to files relating to the Modal pipeline runner app, dlt pipelines, dbt transformations or project dependencies.
 
-Data is visualised in a Streamlit app (under construction). This will be hosted via Modal and have a similar deployment workflow.
+Data is visualised in a Streamlit app (under construction), hosted with Modal and there is a Github workflow for deployment on changes to main.
 
 ## Run this project
 
