@@ -2,8 +2,8 @@ import streamlit as st
 import duckdb
 import polars as pl
 
-from loaders import load_obt_player_gameweek_stats, filter_current_player_stats
-from visuals import render_filtered_current_player_stats
+from loaders import load_obt_player_gameweek_stats, filter_current_player_stats, load_fct_standings
+from visuals import render_filtered_current_player_stats, render_standings
 from utils import get_sorted_options
 from inputs import create_slider
 
@@ -24,15 +24,16 @@ with duckdb.connect() as con:
         + 1
     )
 
-#t1, t2 = st.tabs([f"Stats: GW{current_gameweek}", "Trends"])
-# with t1:
-c1, c2, c3, c4, c5 = st.columns([4, 2, 2, 2, 2], gap="large")
-st.html("<br/>")
-stats_table = st.container()
-footer_container = st.container()
+t1, t2 = st.tabs([f"Stats: GW{current_gameweek}", "Standings & Fixtures"])
+with t1:
+    t1c1, t1c2, t1c3, t1c4, t1c5 = st.columns([4, 2, 2, 2, 2], gap="large")
+    st.html("<br/>")
+    stats_table = st.container()
+    footer_container = st.container()
 
-#with t2:
-#    trends_df = st.container()
+with t2:
+    t2c1, t2c2 = st.columns([6,3])
+    standings_table = t2c1.container()
 
 # DYNAMIC BACKEND =================================================================================
 with duckdb.connect() as con:
@@ -40,7 +41,7 @@ with duckdb.connect() as con:
         "select * from player_stats where gameweek=(select max(gameweek) from player_stats)"
     ).pl()
 
-with c1:
+with t1c1:
     st.multiselect(
         "Position",
         options=get_sorted_options(current_player_stats, "position"),
@@ -57,7 +58,7 @@ with c1:
         key="selected_team",
     )
 
-with c2:
+with t1c2:
     create_slider(current_player_stats, "minutes_gw", "Minutes/wk")
     create_slider(
         current_player_stats,
@@ -67,7 +68,7 @@ with c2:
     )
     create_slider(current_player_stats, "cost", "Cost")
 
-with c3:
+with t1c3:
     create_slider(current_player_stats, "points_gw", "Points/wk")
     create_slider(
         current_player_stats,
@@ -83,7 +84,7 @@ with c3:
         step=25,
     )
 
-with c4:
+with t1c4:
     create_slider(
         current_player_stats,
         "points_cost_gw",
@@ -103,7 +104,7 @@ with c4:
         hint="Expected points in next fixture.",
     )
 
-with c5:
+with t1c5:
     create_slider(
         current_player_stats,
         "form_points",
@@ -149,5 +150,5 @@ with footer_container.expander("Guide"):
 #     st.dataframe(player_stats)
 
 
-# if __name__ == "__main__":
-# web_app()
+with standings_table:
+    render_standings(load_fct_standings())

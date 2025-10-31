@@ -2,6 +2,24 @@ import plotly.express as px
 import streamlit as st
 
 
+def render_standings(df):
+    out = st.dataframe(
+        #df[["position", "team", "games", "wins", "draws", "losses", "points", "goals_for", "goals_against", "goal_difference"]],
+        df,         height=20*37-3,
+                 column_config={
+                     "position":st.column_config.TextColumn("#"),
+                     "team":st.column_config.TextColumn("Team"),
+                     "games":st.column_config.NumberColumn("Played", format="%.0f"),
+                     "wins":st.column_config.NumberColumn("Won", format="%.0f"),
+                     "draws":st.column_config.NumberColumn("Drawn", format="%.0f"),
+                     "losses":st.column_config.NumberColumn("Lost", format="%.0f"),
+                     "points":st.column_config.NumberColumn("Points", format="%.0f"),
+                     "goals_for":st.column_config.NumberColumn("GF", format="%.0f"),
+                     "goals_against":st.column_config.NumberColumn("GA", format="%.0f"),
+                     "goal_difference":st.column_config.NumberColumn("GD", format="%.0f"),
+                     })
+    return out
+
 def render_filtered_current_player_stats(df):
     out = st.dataframe(
         df,

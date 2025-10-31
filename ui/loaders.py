@@ -14,12 +14,22 @@ cache_hours = 12
     max_entries=100,
     show_spinner="Loading data from database...",
 )
-def load_obt_player_gameweek_stats():
+def load_fct_standings():
     with duckdb.connect(
-        # f"md:{st.secrets['connections']['fpl_analytics']['database']}"
         f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
     ) as con:
-        # with duckdb.connect(f"data/fpl_analytics.duckdb") as con:
+        df = con.sql("select * from core.fct_standings").pl()
+    return df
+
+@st.cache_data(
+    ttl=cache_hours * 60 * 60,
+    max_entries=100,
+    show_spinner="Loading data from database...",
+)
+def load_obt_player_gameweek_stats():
+    with duckdb.connect(
+        f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
+    ) as con:
         return (
             con.sql(
                 "select *, player || ' [' || team || ']' as player_team from core.obt_player_gameweek_stats"
