@@ -98,6 +98,7 @@ Data is visualised in a Streamlit app (under construction), hosted with Modal an
 - [x] Create a streamlit UI with overview of player stats for the coming gameweek
 - [x] Host UI on modal
 - [x] Github workflow to handle CD of webapp
+- [x] Trim fat in loaders
 - [ ] Add to UI
     - [ ] Trends for selected players
     - [ ] Standings and fixtures
@@ -106,3 +107,35 @@ Data is visualised in a Streamlit app (under construction), hosted with Modal an
 - [ ] Slack/discord/email notice if ELT fails?
 - [ ] Analytics: matomo?
 
+
+## Maintenance
+
+#### Bloating raw fpl data
+
+Note that daily loads are unneccessary and will create some bloat in the fpl raw data as this uses ``write_disposition='append'``; there will be multiple loads per gameweek. The dbt transformations then use only the most recent per gameweek, so the excess can be removed periodically. Before removing the redundant rows:
+
+1. Copy the motherduck db to the local machine using [copy_motherduck_to_local.py](https://github.com/robgriffin247/fpl_analytics/blob/main/helpers/copy_motherduck_to_local.py) 
+
+1. Verify which rows will be **kept** in motherduck for each table using:
+    ```
+    select * 
+    from fpl_analytics.fpl.<TABLE>
+    where _dlt_load_id::double in (select _dlt_load_id from fpl_analytics.staging.stg_gameweeks);
+
+    ```
+1. Verify which rows will be **discarded** from motherduck using
+    ```
+    select * 
+    from fpl_analytics.fpl.<TABLE>
+    where _dlt_load_id::double not in (select _dlt_load_id from fpl_analytics.staging.stg_gameweeks);
+    ```
+
+1. Consider testing this on a local database first (not on the backup!)
+
+1. Once certain, do this in motherduck
+
+    ```
+    del_SAFETY_ete * 
+    from fpl_analytics.fpl.<TABLE>
+    where _dlt_load_id::double not in (select _dlt_load_id from fpl_analytics.staging.stg_gameweeks);
+    ```
