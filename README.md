@@ -120,14 +120,17 @@ Note that daily loads are unneccessary and will create some bloat in the fpl raw
     ```
     select * 
     from fpl_analytics.fpl.<TABLE>
-    where _dlt_load_id::double in (select _dlt_load_id from fpl_analytics.staging.stg_gameweeks);
-
+    where _dlt_load_id::double in (
+        select _dlt_load_id from fpl_analytics.staging.stg_gameweeks
+    );
     ```
 1. Verify which rows will be **discarded** from motherduck using
     ```
     select * 
     from fpl_analytics.fpl.<TABLE>
-    where _dlt_load_id::double not in (select _dlt_load_id from fpl_analytics.staging.stg_gameweeks);
+    where _dlt_load_id::double not in (
+        select _dlt_load_id from fpl_analytics.staging.stg_gameweeks
+    );
     ```
 
 1. Consider testing this on a local database first (not on the backup!)
@@ -137,5 +140,7 @@ Note that daily loads are unneccessary and will create some bloat in the fpl raw
     ```
     del_SAFETY_ete * 
     from fpl_analytics.fpl.<TABLE>
-    where _dlt_load_id::double not in (select _dlt_load_id from fpl_analytics.staging.stg_gameweeks);
+    where _dlt_load_id::double not in (
+        select _dlt_load_id from fpl_analytics.staging.stg_gameweeks
+    );
     ```

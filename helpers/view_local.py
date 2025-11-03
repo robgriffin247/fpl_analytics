@@ -10,7 +10,8 @@ def query_local_db(query):
         if data is not None:
             return data.pl()
         return data
-    
+
+
 def test_football_data():
     api_key = os.getenv("FOOTBALL_DATA_API_KEY")
     headers = {"X-Auth-Token": api_key}
@@ -19,7 +20,12 @@ def test_football_data():
     response = httpx.get(url, headers=headers)
     response.raise_for_status()
     data = response.json()
-    return(data)
+    return data
 
-if __name__=="__main__":
-    print(query_local_db("select * from (show all tables) where schema='fpl' or schema='football_data'"))
+
+if __name__ == "__main__":
+    print(
+        query_local_db(
+            "select * from (show all tables) where schema='fpl' or schema='football_data'"
+        )
+    )

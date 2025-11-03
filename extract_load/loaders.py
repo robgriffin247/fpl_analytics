@@ -89,7 +89,6 @@ def load_football_data():
         dataset_name="football_data",
     )
 
-
     load_info = pipeline.run(football_data_source())
     return load_info
 
@@ -106,11 +105,15 @@ def load_fpl():
         for key, value in data.items():
             # Other tables are present, reduced to those that currently get used; it just loads all columns (and nested tables)
             #   this could follow the same approach as above but wanted to keep this data as I might find a use later and will want history
-            if isinstance(value, list) and key in ["elements", "element_types", "teams", "events"]:
+            if isinstance(value, list) and key in [
+                "elements",
+                "element_types",
+                "teams",
+                "events",
+            ]:
                 print(f"> Getting table {key}")
                 for item in value:
                     yield dlt.mark.with_table_name(item, key)
-
 
     @dlt.source
     def fpl_source():
