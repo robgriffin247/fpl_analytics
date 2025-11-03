@@ -10,6 +10,7 @@ def load_football_data():
     headers = {"X-Auth-Token": api_key}
     base_url = "https://api.football-data.org/v4/competitions/PL/"
 
+    # Note both tables contain other columns that are not used, so not loaded
     @dlt.resource(name="fixtures", write_disposition="replace")
     def get_fixtures() -> Iterator[Dict[str, Any]]:
         url = f"{base_url}matches"
@@ -22,33 +23,17 @@ def load_football_data():
             yield {
                 "fixture_id": match["id"],
                 "season": match["season"]["id"],
-                "season_start_date": match["season"]["startDate"],
-                "season_end_date": match["season"]["endDate"],
                 "matchday": match["matchday"],
-                "stage": match["stage"],
-                "group": match.get("group"),
-                "utc_date": match["utcDate"],
-                "status": match["status"],
-                "minute": match.get("minute"),
                 "home_team_id": match["homeTeam"]["id"],
                 "home_team_name": match["homeTeam"]["name"],
                 "home_team_short_name": match["homeTeam"]["shortName"],
                 "home_team_tla": match["homeTeam"]["tla"],
-                "home_team_crest": match["homeTeam"]["crest"],
                 "away_team_id": match["awayTeam"]["id"],
                 "away_team_name": match["awayTeam"]["name"],
                 "away_team_short_name": match["awayTeam"]["shortName"],
                 "away_team_tla": match["awayTeam"]["tla"],
-                "away_team_crest": match["awayTeam"]["crest"],
                 "home_score_full_time": match["score"]["fullTime"]["home"],
                 "away_score_full_time": match["score"]["fullTime"]["away"],
-                "home_score_half_time": match["score"]["halfTime"]["home"],
-                "away_score_half_time": match["score"]["halfTime"]["away"],
-                "winner": match["score"].get("winner"),
-                "duration": match["score"].get("duration"),
-                "venue": None,
-                "referees": [],
-                "extracted_at": datetime.now().isoformat(),
             }
 
     @dlt.resource(name="standings", write_disposition="replace")
@@ -63,16 +48,12 @@ def load_football_data():
             for position in standing_type.get("table", []):
                 yield {
                     "season": data["season"]["id"],
-                    "stage": standing_type["stage"],
-                    "type": standing_type["type"],
                     "position": position["position"],
                     "team_id": position["team"]["id"],
                     "team_name": position["team"]["name"],
                     "team_short_name": position["team"]["shortName"],
                     "team_tla": position["team"]["tla"],
-                    "team_crest": position["team"]["crest"],
                     "played_games": position["playedGames"],
-                    "form": position.get("form"),
                     "won": position["won"],
                     "draw": position["draw"],
                     "lost": position["lost"],
@@ -80,7 +61,6 @@ def load_football_data():
                     "goals_for": position["goalsFor"],
                     "goals_against": position["goalsAgainst"],
                     "goal_difference": position["goalDifference"],
-                    "extracted_at": datetime.now().isoformat(),
                 }
 
     @dlt.source
@@ -92,7 +72,7 @@ def load_football_data():
 
     destination = os.getenv("DLT_DESTINATION", "duckdb")
 
-    # Explicitly configure motherduck destination
+    # Configure destination depending on env.
     if destination == "motherduck":
         dest = dlt.destinations.motherduck(
             credentials={
@@ -109,6 +89,7 @@ def load_football_data():
         dataset_name="football_data",
     )
 
+
     load_info = pipeline.run(football_data_source())
     return load_info
 
@@ -123,11 +104,13 @@ def load_fpl():
         data = response.json()
 
         for key, value in data.items():
-            if isinstance(value, list):
+            # Other tables are present, reduced to those that currently get used; it just loads all columns (and nested tables)
+            #   this could follow the same approach as above but wanted to keep this data as I might find a use later and will want history
+            if isinstance(value, list) and key in ["elements", "element_types", "teams", "events"]:
+                print(f"> Getting table {key}")
                 for item in value:
                     yield dlt.mark.with_table_name(item, key)
-            else:
-                yield dlt.mark.with_table_name({key: value}, "metadata")
+
 
     @dlt.source
     def fpl_source():
@@ -135,7 +118,6 @@ def load_fpl():
 
     destination = os.getenv("DLT_DESTINATION", "duckdb")
 
-    # Explicitly configure motherduck destination
     if destination == "motherduck":
         dest = dlt.destinations.motherduck(
             credentials={
