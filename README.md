@@ -8,7 +8,6 @@ The project requires a back-end that automatically and routinely extracts, loads
 
 #### Data Stack
 
-
 - git for version control
 - uv for package management
 - motherduck to persist data
@@ -67,13 +66,14 @@ Data is visualised in a Streamlit app (under construction), hosted with Modal an
     uv sync
     ```
 
-1. Run/deploy the pipeline (note the pipeline_runner.py script auto-redeploys as needed via github workflows)
+1. Run/deploy the modal apps
 
     ```
+    # Examples:
     # modal run or serve to test; run ignores cron schedule
     # modal deploy to update the deployed app
-    # run specific functions with e.g. ...pipeline_runner.py::dbt_only
-    uv run modal run modal/pipeline_runner.py
+    # run specific functions with e.g. ...fpl_analytics_backend.py::dbt_only
+    uv run modal run modal/fpl_analytics_backend.py
     ```
 
 1. Run the streamlit app locally
@@ -98,7 +98,7 @@ Data is visualised in a Streamlit app (under construction), hosted with Modal an
 - [x] Create a streamlit UI with overview of player stats for the coming gameweek
 - [x] Host UI on modal
 - [x] Github workflow to handle CD of webapp
-- [x] Trim fat in loaders
+- [x] Trim fat in loaders 
 - [ ] Add to UI
     - [ ] Trends for selected players
     - [ ] Standings and fixtures
@@ -106,6 +106,11 @@ Data is visualised in a Streamlit app (under construction), hosted with Modal an
 - [ ] Automate linting?
 - [ ] Slack/discord/email notice if ELT fails?
 - [ ] Analytics: matomo?
+- [ ] Modify the cron job to not run off-season
+- [ ] User-facing bot:
+    - Remind of team selection deadline
+    - Show players newly unavailable
+    - Highlight top performers, in-form players and good value players
 
 
 ## Maintenance
