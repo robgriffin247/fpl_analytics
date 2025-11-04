@@ -6,17 +6,13 @@ sources:
     schema: fpl
     tables:
       - name: elements
-        description: Players
-      - name: element_stats
-        description: Stat labels
+        description: Player Gamewek Stats
       - name: element_types
         description: Positions
       - name: events
         description: Gameweeks
       - name: teams
         description: Teams
-      - name: _dlt_loads
-        description: dlt load info
         
   - name: football_data
     description: Raw football data loaded via dlt
