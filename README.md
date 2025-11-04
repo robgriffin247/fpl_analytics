@@ -2,7 +2,7 @@
 
 ## Overview
 
-The aim of this project is to create an app allowing the visualisation and exploration of data from Fantasy Premier League. That data includes player stats, team stats, fixtures and standings.
+The aim of this project is to create an [app](https://robgriffin247--fpl-analytics-web-app-host-web-app.modal.run/) allowing the visualisation and exploration of data from Fantasy Premier League. That data includes player stats, team stats, fixtures and standings.
 
 The project requires a back-end that automatically and routinely extracts, loads and transforms data from multiple APIs into a cloud-database. It also requires a front-end web app UI allowing interaction with the data and visualisations.
 
@@ -28,7 +28,7 @@ Data is then transformed using dbt to create datasets ready for use in the UI. D
 
 A Modal app with a cron schedule is used to run the two dlt pipelines and the dbt transformations every day. Data can be explored via the [motherduck web UI](https://app.motherduck.com/). When changes are committed to main, a Github workflow triggers a redeployment of the pipeline runner app if there have been any changes to files relating to the Modal pipeline runner app, dlt pipelines, dbt transformations or project dependencies.
 
-Data is visualised in a Streamlit app (under construction), hosted with Modal and there is a Github workflow for deployment on changes to main.
+Data is visualised in a Streamlit app (basic app is in place but further development to come), hosted with Modal and there is a Github workflow for deployment on changes to main.
 
 ## Run this project
 

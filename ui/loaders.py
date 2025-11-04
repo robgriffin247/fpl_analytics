@@ -2,7 +2,7 @@ import duckdb
 import streamlit as st
 import polars as pl
 import emoji
-import os 
+import os
 
 from utils import get_sorted_options
 
@@ -15,11 +15,24 @@ cache_hours = 12
     show_spinner="Loading data from database...",
 )
 def load_fct_standings():
-    with duckdb.connect(
-        f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
-    ) as con:
+    with duckdb.connect(f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}") as con:
         df = con.sql("select * from core.fct_standings").pl()
     return df
+
+
+@st.cache_data(
+    ttl=cache_hours * 60 * 60,
+    max_entries=100,
+    show_spinner="Loading data from database...",
+)
+def load_fct_fixtures():
+    with duckdb.connect(
+        # f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
+        "data/fpl_analytics.duckdb"
+    ) as con:
+        df = con.sql("select * from core.fct_fixtures").pl()
+    return df
+
 
 @st.cache_data(
     ttl=cache_hours * 60 * 60,
@@ -27,9 +40,7 @@ def load_fct_standings():
     show_spinner="Loading data from database...",
 )
 def load_obt_player_gameweek_stats():
-    with duckdb.connect(
-        f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
-    ) as con:
+    with duckdb.connect(f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}") as con:
         return (
             con.sql(
                 "select *, player || ' [' || team || ']' as player_team from core.obt_player_gameweek_stats"

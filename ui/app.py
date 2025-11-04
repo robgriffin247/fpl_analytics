@@ -2,7 +2,12 @@ import streamlit as st
 import duckdb
 import polars as pl
 
-from loaders import load_obt_player_gameweek_stats, filter_current_player_stats, load_fct_standings
+from loaders import (
+    load_obt_player_gameweek_stats,
+    filter_current_player_stats,
+    load_fct_standings,
+    load_fct_fixtures,
+)
 from visuals import render_filtered_current_player_stats, render_standings
 from utils import get_sorted_options
 from inputs import create_slider
@@ -32,8 +37,9 @@ with t1:
     footer_container = st.container()
 
 with t2:
-    t2c1, t2c2 = st.columns([6,3])
+    t2c1, t2c2 = st.columns([6, 3])
     standings_table = t2c1.container()
+    fixtures_table = t2c2.container()
 
 # DYNAMIC BACKEND =================================================================================
 with duckdb.connect() as con:
@@ -131,7 +137,8 @@ with stats_table:
 
 with footer_container.expander("Guide"):
 
-    st.markdown("""
+    st.markdown(
+        """
     - Mins: Minutes played
     - Pts: Points scored
     - .../wk: Gameweek average of metric over the season
@@ -144,7 +151,8 @@ with footer_container.expander("Guide"):
     - OF: Opponent form over last 5 gameweeks, average of metric
     - ... (GF): Goals scored by the team/opponent
     - ... (GA): Goals conceded by the team/opponent
-    """)
+    """
+    )
 
 # with trends_df:
 #     st.dataframe(player_stats)
@@ -152,3 +160,6 @@ with footer_container.expander("Guide"):
 
 with standings_table:
     render_standings(load_fct_standings())
+
+with fixtures_table:
+    st.dataframe(load_fct_fixtures())
