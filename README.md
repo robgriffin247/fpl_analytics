@@ -18,13 +18,15 @@ The project requires a back-end that automatically and routinely extracts, loads
 - modal to host the web app
 - github workflows for continuous deployment
 
-![alt text](documentation/datastack.png)
+![data stack (2025-11-04)](documentation/datastack.png)
 
 #### Design
 
 The FPL API includes statistics on players ("elements") and teams. The Football-Data API includes data on league standings and fixtures. This data is extracted from the APIs and loaded to a database on Motherduck using dlt. 
 
-Data is then transformed using dbt to create datasets ready for use in the UI. Data models have been designed to persist data for each gameweek, retaining the latest load per gameweek for each player, to allow tracking of player performance over the season (obt_players contains one row per player and gameweek; the raw fpl_analytics.fpl.elements contains one row per player and dlt load). 
+Data is then transformed using dbt to create datasets ready for use in the UI. Data models have been designed to persist data for each gameweek, retaining the latest load per gameweek for each player, to allow tracking of player performance over the season (obt_player_gameweek_stats contains one row per player and gameweek; the raw fpl_analytics.fpl.elements contains one row per player and dlt load). 
+
+![dbt DAG (2025-11-04)](documentation/dbt-dag.png)
 
 A Modal app with a cron schedule is used to run the two dlt pipelines and the dbt transformations every day. Data can be explored via the [motherduck web UI](https://app.motherduck.com/). When changes are committed to main, a Github workflow triggers a redeployment of the pipeline runner app if there have been any changes to files relating to the Modal pipeline runner app, dlt pipelines, dbt transformations or project dependencies.
 
