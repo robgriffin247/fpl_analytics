@@ -27,8 +27,8 @@ def load_fct_standings():
 )
 def load_fct_fixtures():
     with duckdb.connect(
-        # f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
-        "data/fpl_analytics.duckdb"
+         f"md:{os.environ['DESTINATION__MOTHERDUCK__DATABASE']}"
+        #"data/fpl_analytics.duckdb"
     ) as con:
         df = con.sql("select * from core.fct_fixtures").pl()
     return df
