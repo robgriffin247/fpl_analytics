@@ -29,9 +29,10 @@ jobs:
       - name: Check Formatting
         run: uv run black --check modal/fpl_analytics_backend.py extract_load/ transform/
     
-    # TODO: add testing to CI
+    # TODO: add further testing to CI
 
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     
     steps:
