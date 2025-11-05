@@ -102,14 +102,15 @@ Data is visualised in a Streamlit app (basic app is in place but further develop
 - [x] Create a streamlit UI with overview of player stats for the coming gameweek
 - [x] Host UI on modal
 - [x] Github workflow to handle CD of webapp
-- [x] Trim fat in loaders 
+- [x] Trim fat in loaders; these were generated with Claude and need to be refined 
+- [x] Add black to CI/CD
 - [ ] Add to UI
     - [ ] Trends for selected players
     - [ ] Standings and fixtures
     - [ ] Metrics widgets
-- [ ] Automate linting?
-- [ ] Slack/discord/email notice if ELT fails?
-- [ ] Analytics: matomo?
+- [ ] Slack/discord/email notice if ELT fails? This is already handled as an email by Modal, so would just be for learning
+- [ ] Analytics: matomo or google analytics?
+- [ ] Host dbt docs
 - [ ] Modify the cron job to not run off-season
 - [ ] User-facing bot:
     - Remind of team selection deadline
