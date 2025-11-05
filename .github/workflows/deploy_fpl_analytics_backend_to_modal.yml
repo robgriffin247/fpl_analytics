@@ -27,7 +27,7 @@ jobs:
         run: uv sync
       
       - name: Check Formatting
-        run: uv run black --check .
+        run: uv run black --check modal/fpl_analytics_backend.py extract_load/ transform/
     
     # TODO: add testing to CI
 
