@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: int_team_fixtures
+  - name: int_fixtures
     description: Table of fixtures per gameweek.
   - name: int_player_gameweek_stats
     description: Player statistics per gameweek with decoded team and position, plus rolling values.

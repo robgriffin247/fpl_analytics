@@ -2,10 +2,7 @@ version: 2
 
 models:
   - name: obt_player_gameweek_stats
-    description: >
-      "Table containing player statistics for each gameweek during the season. One row
-      per player and gameweek. Production table includes details on upcoming fixtures including 
-      opponents and form."
+    description: Table containing player statistics for each gameweek during the season. One row per player and gameweek. Production table includes details on upcoming fixtures including opponents and form.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
