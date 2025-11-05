@@ -12,12 +12,31 @@ on:
       - '.github/workflows/deploy_fpl_analytics_backend_to_modal.yml'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Set up Python
+        run: uv python install
+      
+      - name: Install dependencies
+        run: uv sync
+      
+      - name: Lint
+        run: uv run ruff check
+    
+    # TODO: add testing to CI
+
   deploy:
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v4
-      
+    
       - name: Install uv
         uses: astral-sh/setup-uv@v3
         

@@ -8,17 +8,19 @@ The project requires a back-end that automatically and routinely extracts, loads
 
 #### Data Stack
 
-- git for version control
-- uv for package management
-- motherduck to persist data
-- dlt to extract/load data
-- dbt to transform data
-- modal to orchestrate dlt and dbt runs
-- streamlit for the web app/UI
-- modal to host the web app
-- github workflows for continuous deployment
-
 ![data stack (2025-11-04)](documentation/datastack.png)
+
+
+|Job|Tool|
+|-----|-----|
+|Version Control|Git & GitHub|
+|Package Management|uv|
+|CI/CD|GitHub Actions|
+|Data Storage|MotherDuck (prod) & DuckDB (dev)|
+|Extract & Load Data|httpx & dlt|
+|Transform Data|dbt core|
+|Orchestration|Modal|
+|Web App|Modal & Streamlit|
 
 #### Design
 
